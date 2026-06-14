@@ -751,23 +751,23 @@ footer a:hover{color:var(--accent-signal);}
           <div class="shot-cap" data-i18n-html="shot1_cap"><b>n8n — Track 1 (вхід тікета):</b> Gmail Trigger → Collect Ticket Context → AI Classifier (Chain of Thought) → Flatten Result → Не спам? → паралельно Log → Tickets Sheet + Slack: Notify Owner. У панелі Output — повний JSON класифікації (category, priority, owner, sla_minutes, reasoning, sentiment).</div>
         </div>
         <div class="glass shot full">
-          <img src="photo_2026-06-14_15-57-41.jpg" alt="n8n full workflow overview">
+          <img src="photo_2026-06-14_15-57-32.jpg" alt="n8n full workflow overview">
           <div class="shot-cap" data-i18n-html="shot2_cap"><b>n8n — обидва треки разом:</b> зверху вхідний трек класифікації, знизу SLA Watcher (every 5m) → Read Open Tickets → SLA Breached? → Compute Escalation Level → Switch by Level → Slack: Remind Owner (L0) / Notify TL (L1) / Email Director (L2).</div>
         </div>
         <div class="glass shot full">
-          <img src="photo_2026-06-14_15-57-38.jpg" alt="n8n Track 2 SLA watcher run">
+          <img src="photo_2026-06-14_15-57-35.jpg" alt="n8n Track 2 SLA watcher run">
           <div class="shot-cap" data-i18n-html="shot3_cap"><b>n8n — Track 2 успішний запуск:</b> Switch by Level спрацював, вивід ноди Slack: Remind Owner (L0)1 показує <code>ok: true</code> — повідомлення про прострочення SLA доставлено в Slack.</div>
         </div>
         <div class="glass shot full">
-          <img src="photo_2026-06-14_15-57-20.jpg" alt="Google Sheets tickets log">
+          <img src="photo_2026-06-14_15-57-29.jpg" alt="Google Sheets tickets log">
           <div class="shot-cap" data-i18n-html="shot4_cap"><b>Tickets Log у Google Sheets:</b> 10 рядків з полями category, priority, owner, sla_minutes, sla_deadline (ISO 8601) та reasoning — 3 речення обґрунтування за naléhavost / obchodní dopad / kontext klienta для кожного тікета.</div>
         </div>
         <div class="glass shot">
-          <img src="images/slack_classify.png" alt="Slack classification message">
+          <img src="photo_2026-06-14_15-57-41.jpg" alt="Slack classification message">
           <div class="shot-cap" data-i18n-html="shot5_cap"><b>Slack — нова класифікація:</b> «🚨 Новий тікет — P4. Власник: null, Категорія: Spam, SLA: 2880 хв, Sentiment: neutral».</div>
         </div>
         <div class="glass shot">
-          <img src="images/slack_escalation.png" alt="Slack SLA escalation message">
+          <img src="photo_2026-06-14_15-57-38.jpg" alt="Slack SLA escalation message">
           <div class="shot-cap" data-i18n-html="shot6_cap"><b>SLA-ескалація L0:</b> «⚠️ Нагадування — SLA прострочено. Власнику m.simek: тікет P1 прострочено на 65 хв. Тема: Stížnost na makléře — požaduji vrácení zálohy».</div>
         </div>
       </div>
