@@ -1,41 +1,47 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RealityPraha — AI Ticket Routing & SLA Agent | Case Study</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg-abyss:#03050a;
-  --accent-terracotta:#c97a52;
-  --accent-signal:#4fb892;
-  --text-light:#d9e0ea;
-  --text-muted:#69748c;
-  --grad-1:#1c2440;
-  --grad-2:#10362d;
-  --grad-3:#5e2f1c;
-  --line:rgba(201,122,82,0.14);
+  --bg:#000000;
+  --bg-card:rgba(255,255,255,0.025);
+  --text:#ffffff;
+  --text-muted:#777777;
+  --text-dim:#444444;
+  --border:rgba(255,255,255,0.07);
+  --border-hover:rgba(255,255,255,0.18);
+  --glow:rgba(255,255,255,0.06);
+  --glow-strong:rgba(255,255,255,0.12);
+  --accent:#ffffff;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
 *{cursor:none !important;}
 input,textarea{cursor:text !important;}
 body{
-  font-family:'Inter',sans-serif;
-  background:var(--bg-abyss);
-  color:var(--text-light);
+  font-family:'Candara','Calibri','Segoe UI',sans-serif;
+  font-weight:300;
+  background:var(--bg);
+  color:var(--text);
   overflow-x:hidden;
   min-height:100vh;
-  line-height:1.65;
+  line-height:1.7;
   font-size:16px;
+  -webkit-font-smoothing:antialiased;
 }
-h1,h2,h3,h4{font-family:'Cormorant Garamond',serif;color:var(--text-light);}
-code,.mono{font-family:'JetBrains Mono',monospace;}
-
-/* ===== CUSTOM CURSOR — little roof ===== */
+h1,h2,h3,h4{
+  font-family:'Candara','Calibri','Segoe UI',sans-serif;
+  font-weight:300;
+  color:var(--text);
+  line-height:1.2;
+}
+code,.mono,.prompt-block{
+  font-family:'Candara','Calibri','Segoe UI',sans-serif;
+  font-weight:300;
+}
 .cursor-roof{
   position:fixed;pointer-events:none;z-index:999999;
   transform:translate(-50%,-60%);
@@ -44,12 +50,10 @@ code,.mono{font-family:'JetBrains Mono',monospace;}
 }
 .cursor-roof svg{
   width:26px;height:22px;
-  filter:drop-shadow(0 0 12px var(--accent-terracotta));
+  filter:drop-shadow(0 0 8px rgba(255,255,255,0.5));
   transition:transform .25s ease;
 }
 .cursor-roof.hovering svg{transform:scale(1.5);}
-
-/* ===== HEADER ===== */
 .main-header{
   position:fixed;top:0;left:0;right:0;z-index:1001;
   padding:1.5rem 2rem;
@@ -59,92 +63,86 @@ code,.mono{font-family:'JetBrains Mono',monospace;}
 }
 .main-header.hidden{transform:translateY(-100%);}
 .header-logo{
-  font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:700;
-  color:var(--text-light);pointer-events:auto;
+  font-size:1.5rem;font-weight:300;
+  color:var(--text);pointer-events:auto;
   display:flex;align-items:center;gap:.5rem;
+  letter-spacing:.02em;
 }
-.header-logo .dot{width:8px;height:8px;border-radius:50%;background:var(--accent-terracotta);}
+.header-logo .dot{width:8px;height:8px;border-radius:50%;background:var(--text);}
 .header-nav{
   display:flex;gap:1.75rem;pointer-events:auto;
-  background:rgba(15,22,38,.5);
-  border:1px solid var(--line);
+  background:rgba(255,255,255,0.04);
+  border:1px solid var(--border);
   border-radius:100px;padding:.5rem 1.5rem;
   backdrop-filter:blur(10px);
 }
 .header-nav a{
-  color:var(--text-muted);text-decoration:none;font-size:.8rem;font-weight:600;
+  color:var(--text-muted);text-decoration:none;font-size:.85rem;font-weight:300;
   letter-spacing:.06em;text-transform:uppercase;transition:color .25s;
 }
-.header-nav a:hover{color:var(--accent-terracotta);}
-
+.header-nav a:hover{color:var(--text);}
 @media (max-width:900px){.header-nav{display:none;}}
-
-/* ===== LANGUAGE SWITCHER ===== */
 .lang-switcher{
   position:fixed;bottom:2rem;left:2rem;z-index:1002;
   display:flex;gap:.25rem;
-  background:rgba(6,10,18,.7);
-  border:1px solid var(--line);
+  background:rgba(0,0,0,0.8);
+  border:1px solid var(--border);
   backdrop-filter:blur(14px);
   border-radius:100px;padding:.35rem;
-  box-shadow:0 8px 25px rgba(0,0,0,.4);
+  box-shadow:0 8px 25px rgba(0,0,0,.6);
   transition:transform .4s cubic-bezier(.4,0,.2,1);
 }
 .lang-switcher.hidden{transform:translateY(150%);}
 .lang-btn{
   background:transparent;border:none;color:var(--text-muted);
   padding:.4rem .9rem;border-radius:30px;
-  font-family:'Inter',sans-serif;font-size:.78rem;font-weight:700;
+  font-family:'Candara',sans-serif;font-size:.82rem;font-weight:300;
   letter-spacing:.04em;transition:all .25s ease;cursor:none !important;
 }
 .lang-btn.active{
-  background:var(--accent-terracotta);color:#07090f;
-  box-shadow:0 0 14px rgba(201,122,82,.4);
+  background:var(--text);color:#000;
+  box-shadow:0 0 14px rgba(255,255,255,0.2);
 }
-.lang-btn:hover:not(.active){color:var(--text-light);background:rgba(255,255,255,.06);}
-
-/* ===== MUSIC BUTTON ===== */
+.lang-btn:hover:not(.active){color:var(--text);background:rgba(255,255,255,0.06);}
 .music-btn{
   position:fixed;bottom:2rem;right:2rem;z-index:1002;
   width:54px;height:54px;border-radius:50%;
-  background:rgba(6,10,18,.7);
-  border:1px solid var(--line);
+  background:rgba(0,0,0,0.8);
+  border:1px solid var(--border);
   backdrop-filter:blur(14px);
   display:flex;align-items:center;justify-content:center;
   transition:all .4s cubic-bezier(.4,0,.2,1);
   cursor:none !important;
 }
 .music-btn:hover{
-  background:rgba(201,122,82,.15);transform:scale(1.08);
-  box-shadow:0 0 22px rgba(201,122,82,.3);
+  background:rgba(255,255,255,0.08);transform:scale(1.08);
+  box-shadow:0 0 22px rgba(255,255,255,0.1);
 }
 .music-btn.active{
-  background:var(--accent-terracotta);border-color:var(--accent-terracotta);
-  box-shadow:0 0 26px rgba(201,122,82,.45);
+  background:var(--text);border-color:var(--text);
+  box-shadow:0 0 26px rgba(255,255,255,0.25);
 }
-.music-btn svg{width:20px;height:20px;color:var(--accent-terracotta);}
-.music-btn.active svg{color:#07090f;}
+.music-btn svg{width:20px;height:20px;color:var(--text-muted);}
+.music-btn.active svg{color:#000;}
 .eq-bars{display:none;gap:3px;height:14px;align-items:flex-end;}
 .music-btn.active .eq-bars{display:flex;}
 .music-btn.active svg{display:none;}
-.eq-bar{width:3px;background:#07090f;border-radius:2px;animation:eqBounce .8s ease-in-out infinite;}
+.eq-bar{width:3px;background:#000;border-radius:2px;animation:eqBounce .8s ease-in-out infinite;}
 .eq-bar:nth-child(1){height:30%;animation-delay:0s;}
 .eq-bar:nth-child(2){height:80%;animation-delay:.2s;}
 .eq-bar:nth-child(3){height:50%;animation-delay:.4s;}
 @keyframes eqBounce{0%,100%{transform:scaleY(1);}50%{transform:scaleY(.5);}}
-
-/* ===== BACKGROUND ===== */
 .ocean-atmosphere{
   position:fixed;inset:0;z-index:0;overflow:hidden;
-  background:linear-gradient(135deg,#020308 0%,#05080f 50%,#000000 100%);
+  background:#000000;
 }
 .blob{
-  position:absolute;border-radius:50%;filter:blur(100px);opacity:.28;
+  position:absolute;border-radius:50%;filter:blur(120px);opacity:.12;
   animation:blob-float 24s ease-in-out infinite;
 }
-.blob-1{width:620px;height:620px;background:linear-gradient(135deg,var(--grad-1),var(--grad-2));top:-220px;left:-120px;animation-delay:0s;}
-.blob-2{width:520px;height:520px;background:linear-gradient(135deg,var(--grad-2),var(--grad-3));bottom:-180px;right:-120px;animation-delay:-8s;}
-.blob-3{width:420px;height:420px;background:linear-gradient(135deg,var(--accent-terracotta),#3a1f12);top:42%;left:55%;animation-delay:-16s;opacity:.14;}
+.blob-1{width:620px;height:620px;background:rgba(255,255,255,0.08);top:-220px;left:-120px;animation-delay:0s;}
+.blob-2{width:520px;height:520px;background:rgba(255,255,255,0.05);bottom:-180px;right:-120px;animation-delay:-8s;}
+.blob-3{width:420px;height:420px;background:rgba(255,255,255,0.03);top:42%;left:55%;animation-delay:-16s;}
 @keyframes blob-float{
   0%,100%{transform:translate(0,0) scale(1);}
   25%{transform:translate(35px,-55px) scale(1.05);}
@@ -154,27 +152,22 @@ code,.mono{font-family:'JetBrains Mono',monospace;}
 .caustics{
   position:absolute;inset:0;
   background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='c'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.02' numOctaves='3' seed='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeBlend in='SourceGraphic'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23c)'/%3E%3C/svg%3E");
-  opacity:.03;mix-blend-mode:overlay;animation:caustics-move 34s linear infinite;
+  opacity:.02;mix-blend-mode:overlay;animation:caustics-move 34s linear infinite;
 }
 @keyframes caustics-move{0%{transform:translate(0,0) rotate(0deg);}100%{transform:translate(-50px,-50px) rotate(360deg);}}
 .noise-overlay{
   position:absolute;inset:0;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23n)'/%3E%3C/svg%3E");
-  opacity:.025;pointer-events:none;z-index:1;
+  opacity:.02;pointer-events:none;z-index:1;
 }
 #particles-canvas{position:absolute;inset:0;z-index:2;}
-
-/* Skyline silhouette baked into background */
 .skyline-bg{
   position:fixed;bottom:0;left:0;right:0;height:40vh;z-index:1;
-  opacity:.5;pointer-events:none;
+  opacity:.35;pointer-events:none;
   transition:opacity .6s ease;
 }
 .skyline-bg svg{display:block;width:100%;height:100%;}
-
 .content-wrapper{position:relative;z-index:10;}
-
-/* ===== HERO ===== */
 .hero{
   min-height:100vh;display:flex;flex-direction:column;justify-content:center;
   align-items:center;text-align:center;padding:2rem;padding-top:7rem;
@@ -182,210 +175,225 @@ code,.mono{font-family:'JetBrains Mono',monospace;}
 .hero-content{max-width:880px;}
 .elegant-badge{
   display:inline-flex;align-items:center;gap:.625rem;
-  padding:.625rem 1.25rem;background:rgba(15,22,38,.5);
-  border:1px solid var(--line);border-radius:100px;backdrop-filter:blur(10px);
-  font-size:.8125rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
-  color:var(--accent-terracotta);margin-bottom:2rem;
+  padding:.625rem 1.25rem;background:rgba(255,255,255,0.04);
+  border:1px solid var(--border);border-radius:100px;backdrop-filter:blur(10px);
+  font-size:.85rem;font-weight:300;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--text-muted);margin-bottom:2rem;
   opacity:0;animation:fadeUp 1s ease-out .3s forwards;
 }
-.badge-orb{width:6px;height:6px;background:var(--accent-terracotta);border-radius:50%;animation:orbPulse 3s ease-in-out infinite;}
-@keyframes orbPulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(224,145,106,.4);}50%{opacity:.5;box-shadow:0 0 0 6px rgba(224,145,106,0);}}
-
+.badge-orb{width:6px;height:6px;background:var(--text);border-radius:50%;animation:orbPulse 3s ease-in-out infinite;}
+@keyframes orbPulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(255,255,255,0.3);}50%{opacity:.5;box-shadow:0 0 0 6px rgba(255,255,255,0);}}
 .hero-title{
-  font-size:clamp(2.8rem,8vw,5.2rem);font-weight:300;line-height:1.08;
-  margin-bottom:1.5rem;color:var(--text-light);
+  font-size:clamp(2.8rem,8vw,5.2rem);font-weight:300;line-height:1.1;
+  margin-bottom:1.5rem;color:var(--text);
   opacity:0;animation:fadeUp 1s ease-out .5s forwards;
-  text-shadow:0 0 40px rgba(0,0,0,.5);
+  text-shadow:0 0 60px rgba(255,255,255,0.06);
 }
 .hero-title .emphasis{
-  font-weight:600;font-style:italic;
-  background:linear-gradient(135deg,#fff 0%,var(--accent-terracotta) 50%,var(--accent-signal) 100%);
+  font-weight:300;font-style:italic;
+  background:linear-gradient(135deg,#ffffff 0%,#cccccc 40%,#ffffff 60%,#999999 100%);
   background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;
   background-clip:text;animation:shimmer 7s linear infinite;
 }
 @keyframes shimmer{to{background-position:200% center;}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(28px);}to{opacity:1;transform:translateY(0);}}
-
 .hero-subtitle{
   font-size:clamp(1rem,2.2vw,1.2rem);font-weight:300;color:var(--text-muted);
   line-height:1.85;max-width:580px;margin:0 auto 2.5rem;
   opacity:0;animation:fadeUp 1s ease-out .7s forwards;
 }
-
 .hero-meta{
   display:flex;flex-wrap:wrap;justify-content:center;gap:2.5rem;
-  margin-top:1rem;
-  opacity:0;animation:fadeUp 1s ease-out .9s forwards;
+  margin-top:1rem;opacity:0;animation:fadeUp 1s ease-out .9s forwards;
 }
 .hero-meta-item{text-align:left;}
 .hero-meta-item .label{
-  font-size:.72rem;text-transform:uppercase;letter-spacing:.14em;
-  color:var(--text-muted);margin-bottom:.4rem;font-weight:600;
+  font-size:.75rem;text-transform:uppercase;letter-spacing:.14em;
+  color:var(--text-dim);margin-bottom:.4rem;font-weight:300;
 }
-.hero-meta-item .val{font-size:.95rem;color:var(--text-light);font-weight:500;}
-
+.hero-meta-item .val{font-size:.95rem;color:var(--text-muted);font-weight:300;}
 .scroll-cue{
   margin-top:4rem;display:flex;flex-direction:column;align-items:center;gap:.6rem;
-  color:var(--text-muted);font-size:.75rem;letter-spacing:.18em;text-transform:uppercase;
-  opacity:0;animation:fadeUp 1s ease-out 1.1s forwards;
+  color:var(--text-dim);font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;
+  font-weight:300;opacity:0;animation:fadeUp 1s ease-out 1.1s forwards;
 }
-.scroll-cue .line{width:1px;height:36px;background:linear-gradient(to bottom,var(--accent-terracotta),transparent);animation:lineGrow 2s ease-in-out infinite;}
+.scroll-cue .line{width:1px;height:36px;background:linear-gradient(to bottom,rgba(255,255,255,0.5),transparent);animation:lineGrow 2s ease-in-out infinite;}
 @keyframes lineGrow{0%,100%{opacity:.3;}50%{opacity:1;}}
-
-/* ===== SECTIONS ===== */
 section.block{padding:7rem 2rem;position:relative;}
 .wrap{max-width:1000px;margin:0 auto;perspective:1200px;}
 .eyebrow{
   display:flex;align-items:center;gap:.75rem;margin-bottom:1rem;
-  font-size:.78rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
-  color:var(--accent-terracotta);
+  font-size:.82rem;font-weight:300;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--text-muted);
 }
 .eyebrow .idx{
-  font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;
-  color:var(--text-muted);font-size:1rem;letter-spacing:0;
+  font-style:italic;font-weight:300;
+  color:var(--text-dim);font-size:1.05rem;letter-spacing:0;
 }
-h2.title{font-size:clamp(2rem,4.5vw,3rem);font-weight:600;margin-bottom:1.5rem;}
-.lead{font-size:1.15rem;color:var(--text-light);max-width:42rem;margin-bottom:.5rem;font-weight:300;}
+h2.title{font-size:clamp(2rem,4.5vw,3rem);font-weight:300;margin-bottom:1.5rem;}
+.lead{font-size:1.15rem;color:var(--text-muted);max-width:42rem;margin-bottom:.5rem;font-weight:300;}
 .muted{color:var(--text-muted);}
 p{margin-bottom:.9rem;max-width:42rem;font-weight:300;}
-
-/* glass card */
 .glass{
-  background:rgba(6,10,18,.86);
-  border:1px solid var(--line);
+  background:var(--bg-card);
+  border:1px solid var(--border);
   border-radius:20px;
   backdrop-filter:blur(20px);
   padding:1.8rem 2rem;
-  transition:opacity .5s cubic-bezier(.4,0,.2,1), transform .5s cubic-bezier(.4,0,.2,1);
   opacity:0;
   transform:translateY(36px);
   transform-style:preserve-3d;
   will-change:transform;
   position:relative;
+  transition:
+    opacity .6s cubic-bezier(.4,0,.2,1),
+    transform .6s cubic-bezier(.4,0,.2,1),
+    box-shadow .4s ease,
+    border-color .4s ease;
 }
 .glass.visible{opacity:1;transform:translateY(0) rotateX(0) rotateY(0) scale(1);}
-.glass.tilting{transition:transform .12s ease-out, box-shadow .3s ease;}
+.glass::before{
+  content:'';position:absolute;inset:-1px;border-radius:20px;
+  background:radial-gradient(
+    600px circle at var(--gx,50%) var(--gy,50%),
+    rgba(255,255,255,0.10) 0%,
+    rgba(255,255,255,0.03) 30%,
+    transparent 60%
+  );
+  opacity:0;transition:opacity .5s ease;pointer-events:none;z-index:0;
+}
 .glass::after{
   content:'';position:absolute;inset:0;border-radius:20px;
-  background:radial-gradient(circle at var(--gx,50%) var(--gy,50%), rgba(201,122,82,.16), transparent 60%);
-  opacity:0;transition:opacity .4s ease;pointer-events:none;
-  z-index:0;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,0.0) 0%, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.0) 50%, rgba(255,255,255,0.03) 75%, rgba(255,255,255,0.0) 100%);
+  opacity:0;transition:opacity .5s ease;pointer-events:none;z-index:0;
+  mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite:xor;-webkit-mask-composite:xor;
+  padding:1px;
 }
+.glass .card-inner{
+  position:relative;z-index:1;
+  transition:transform .15s ease-out;
+}
+.glass.tilting{
+  transition:
+    transform .08s ease-out,
+    box-shadow .3s ease,
+    border-color .3s ease;
+  border-color:var(--border-hover);
+  box-shadow:
+    0 2px 8px rgba(0,0,0,0.4),
+    0 8px 24px rgba(0,0,0,0.3),
+    0 20px 60px rgba(0,0,0,0.2),
+    0 0 0 1px rgba(255,255,255,0.05),
+    inset 0 1px 0 rgba(255,255,255,0.06),
+    inset 0 -1px 0 rgba(0,0,0,0.3),
+    calc(var(--tx,0px) * -0.5) calc(var(--ty,0px) * -0.5) 40px -10px rgba(255,80,80,0.04),
+    calc(var(--tx,0px) * 0.5) calc(var(--ty,0px) * 0.5) 40px -10px rgba(80,80,255,0.04);
+}
+.glass.tilting::before{opacity:1;}
 .glass.tilting::after{opacity:1;}
-.glass > *{position:relative;z-index:1;}
-
-/* ===== CONTEXT GRID ===== */
+.glass.tilting .card-inner{
+  transform:translateZ(12px) scale(1.005);
+}
 .ctx-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:1.8rem;margin-top:2rem;}
 .ctx-card h4{
-  font-family:'Inter',sans-serif;font-size:.78rem;text-transform:uppercase;letter-spacing:.14em;
-  margin-bottom:.9rem;color:var(--accent-signal);font-weight:700;
+  font-size:.85rem;text-transform:uppercase;letter-spacing:.14em;
+  margin-bottom:.9rem;color:var(--text-muted);font-weight:300;
 }
 .ctx-list{list-style:none;display:flex;flex-direction:column;gap:.6rem;}
-.ctx-list li{display:flex;gap:.6rem;font-size:.92rem;color:var(--text-light);font-weight:300;}
-.ctx-list li::before{content:'—';color:var(--accent-terracotta);font-weight:700;flex-shrink:0;}
-
-/* ===== SPLIT (problem/solution) ===== */
+.ctx-list li{display:flex;gap:.6rem;font-size:.92rem;color:var(--text-muted);font-weight:300;}
+.ctx-list li::before{content:'—';color:var(--text-dim);font-weight:300;flex-shrink:0;}
 .split{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:2rem;}
-.split-card h3{font-size:1.4rem;margin-bottom:1rem;font-weight:600;}
+.split-card h3{font-size:1.4rem;margin-bottom:1rem;font-weight:300;}
 .split-card ul{list-style:none;display:flex;flex-direction:column;gap:.65rem;font-size:.92rem;font-weight:300;}
-.split-card ul li{padding-left:1.4rem;position:relative;}
-.split-card.problem ul li::before{content:'×';position:absolute;left:0;color:#e0746a;font-weight:800;}
-.split-card.solution ul li::before{content:'✓';position:absolute;left:0;color:var(--accent-signal);font-weight:800;}
-.split-card.problem{border-left:3px solid #e0746a;}
-.split-card.solution{border-left:3px solid var(--accent-signal);}
-
-/* ===== PROCESS ===== */
+.split-card ul li{padding-left:1.4rem;position:relative;color:var(--text-muted);}
+.split-card.problem ul li::before{content:'×';position:absolute;left:0;color:rgba(255,255,255,0.35);font-weight:300;}
+.split-card.solution ul li::before{content:'✓';position:absolute;left:0;color:var(--text);font-weight:300;}
+.split-card.problem{border-left:3px solid rgba(255,255,255,0.15);}
+.split-card.solution{border-left:3px solid var(--text);}
 .process-step{
   display:grid;grid-template-columns:64px 1fr;gap:1.6rem;
-  padding:2rem 0;border-top:1px solid var(--line);
+  padding:2rem 0;border-top:1px solid var(--border);
 }
 .process-step:first-child{border-top:none;padding-top:0;}
 .process-num{
-  font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;
-  font-size:2.2rem;color:var(--accent-terracotta);line-height:1;
+  font-style:italic;font-weight:300;
+  font-size:2.2rem;color:var(--text-muted);line-height:1;
 }
-.process-step h4{font-size:1.25rem;margin-bottom:.6rem;font-weight:600;}
+.process-step h4{font-size:1.25rem;margin-bottom:.6rem;font-weight:300;}
 .tag-row{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.75rem;}
 .tag{
-  font-size:.72rem;font-weight:600;color:var(--accent-signal);
-  background:rgba(107,227,180,.08);border:1px solid rgba(107,227,180,.25);
+  font-size:.75rem;font-weight:300;color:var(--text-muted);
+  background:rgba(255,255,255,0.04);border:1px solid var(--border);
   border-radius:100px;padding:.3rem .8rem;letter-spacing:.03em;
 }
 .prompt-block{
-  background:rgba(4,8,16,.7);color:#cdd6e8;
-  border-radius:12px;padding:1.1rem 1.3rem;font-size:.82rem;
-  font-family:'JetBrains Mono',monospace;margin-top:.9rem;overflow-x:auto;line-height:1.8;
-  border:1px solid var(--line);
+  background:rgba(255,255,255,0.02);color:var(--text-muted);
+  border-radius:12px;padding:1.1rem 1.3rem;font-size:.85rem;
+  font-weight:300;margin-top:.9rem;overflow-x:auto;line-height:1.8;
+  border:1px solid var(--border);
 }
-.prompt-block .k{color:var(--accent-terracotta);}
-.prompt-block .s{color:var(--accent-signal);}
-
-/* ===== DIAGRAM ===== */
+.prompt-block .k{color:var(--text);}
+.prompt-block .s{color:var(--text-muted);}
 .diagram-wrap{
   margin-top:2rem;border-radius:20px;
-  background:rgba(8,14,26,.55);border:1px solid var(--line);
+  background:rgba(255,255,255,0.015);border:1px solid var(--border);
   padding:1.8rem;backdrop-filter:blur(16px);
   overflow-x:auto;max-width:100%;
 }
-.diagram-title{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:var(--accent-signal);margin-bottom:.4rem;}
-.diagram-caption{font-size:.85rem;color:var(--text-muted);margin-bottom:1.2rem;}
+.diagram-title{font-size:.82rem;font-weight:300;text-transform:uppercase;letter-spacing:.14em;color:var(--text-muted);margin-bottom:.4rem;}
+.diagram-caption{font-size:.85rem;color:var(--text-dim);margin-bottom:1.2rem;font-weight:300;}
 .flow-track{margin-bottom:1.8rem;min-width:740px;}
 .flow-track:last-child{margin-bottom:0;}
 .flow-row{display:flex;align-items:center;flex-wrap:wrap;row-gap:.6rem;}
 .flow-node{
-  flex-shrink:0;background:rgba(255,255,255,.03);
-  border:1px solid var(--line);border-radius:10px;
-  padding:.6rem .9rem;font-size:.78rem;font-weight:600;color:var(--text-light);
+  flex-shrink:0;background:rgba(255,255,255,0.03);
+  border:1px solid var(--border);border-radius:10px;
+  padding:.6rem .9rem;font-size:.82rem;font-weight:300;color:var(--text-muted);
   white-space:nowrap;
 }
-.flow-node.trigger{background:rgba(107,227,180,.12);color:var(--accent-signal);border-color:rgba(107,227,180,.35);}
-.flow-node.ai{background:rgba(58,74,120,.4);color:#cdd6e8;border-color:rgba(120,140,200,.35);}
-.flow-node.decision{background:transparent;border:1px dashed var(--accent-terracotta);color:var(--accent-terracotta);border-radius:100px;}
-.flow-node.output{background:rgba(224,145,106,.12);border-color:rgba(224,145,106,.35);color:var(--accent-terracotta);}
-.flow-arrow{flex-shrink:0;width:24px;height:24px;display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:16px;margin:0 2px;}
-.flow-branches{display:flex;flex-direction:column;gap:.5rem;margin-left:34px;margin-top:.6rem;padding-left:1.1rem;border-left:2px dashed var(--line);}
-.flow-branch{display:flex;align-items:center;gap:.6rem;font-size:.78rem;color:var(--text-light);font-weight:300;}
-.flow-branch .lvl{font-weight:700;font-size:.68rem;border-radius:6px;padding:.25rem .55rem;flex-shrink:0;}
-.lvl-l0{background:rgba(107,227,180,.18);color:var(--accent-signal);}
-.lvl-l1{background:rgba(224,145,106,.18);color:var(--accent-terracotta);}
-.lvl-l2{background:rgba(120,140,200,.22);color:#cdd6e8;}
-
-/* ===== SCREENSHOTS ===== */
+.flow-node.trigger{background:rgba(255,255,255,0.08);color:var(--text);border-color:rgba(255,255,255,0.2);}
+.flow-node.ai{background:rgba(255,255,255,0.05);color:var(--text-muted);border-color:rgba(255,255,255,0.15);}
+.flow-node.decision{background:transparent;border:1px dashed rgba(255,255,255,0.2);color:var(--text-muted);border-radius:100px;}
+.flow-node.output{background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.15);color:var(--text-muted);}
+.flow-arrow{flex-shrink:0;width:24px;height:24px;display:flex;align-items:center;justify-content:center;color:var(--text-dim);font-size:16px;margin:0 2px;}
+.flow-branches{display:flex;flex-direction:column;gap:.5rem;margin-left:34px;margin-top:.6rem;padding-left:1.1rem;border-left:2px dashed var(--border);}
+.flow-branch{display:flex;align-items:center;gap:.6rem;font-size:.82rem;color:var(--text-muted);font-weight:300;}
+.flow-branch .lvl{font-weight:300;font-size:.72rem;border-radius:6px;padding:.25rem .55rem;flex-shrink:0;}
+.lvl-l0{background:rgba(255,255,255,0.1);color:var(--text);}
+.lvl-l1{background:rgba(255,255,255,0.06);color:var(--text-muted);}
+.lvl-l2{background:rgba(255,255,255,0.03);color:var(--text-dim);}
 .shot-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.4rem;margin-top:2rem;}
 .shot.full{grid-column:1/-1;}
 .shot{
-  border-radius:18px;overflow:hidden;border:1px solid var(--line);
-  background:rgba(8,14,26,.5);backdrop-filter:blur(16px);
+  border-radius:18px;overflow:hidden;border:1px solid var(--border);
+  background:rgba(255,255,255,0.015);backdrop-filter:blur(16px);
 }
 .shot img{display:block;width:100%;height:auto;}
-.shot-cap{padding:1rem 1.3rem;font-size:.85rem;color:var(--text-muted);border-top:1px solid var(--line);font-weight:300;}
-.shot-cap b{color:var(--text-light);font-weight:600;}
-
-/* ===== RESULTS ===== */
+.shot-cap{padding:1rem 1.3rem;font-size:.85rem;color:var(--text-dim);border-top:1px solid var(--border);font-weight:300;}
+.shot-cap i{color:var(--text-muted);font-style:italic;}
 .results-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem;margin-top:2rem;}
 .result-card{position:relative;overflow:hidden;padding:1.9rem 1.6rem;}
 .result-card::before{
   content:'';position:absolute;top:-30%;right:-30%;width:120px;height:120px;
-  border-radius:50%;background:var(--accent-terracotta);opacity:.15;
+  border-radius:50%;background:rgba(255,255,255,0.04);
 }
 .result-num{
-  font-family:'Cormorant Garamond',serif;font-weight:700;font-size:2.6rem;
-  color:var(--accent-terracotta);line-height:1.15;margin-bottom:.5rem;position:relative;z-index:1;
+  font-weight:300;font-size:2.6rem;
+  color:var(--text);line-height:1.15;margin-bottom:.5rem;position:relative;z-index:1;
 }
-.result-label{font-size:.92rem;color:var(--text-light);font-weight:500;position:relative;z-index:1;}
-.result-detail{font-size:.78rem;color:var(--text-muted);margin-top:.5rem;position:relative;z-index:1;font-weight:300;}
-
-/* ===== STACK ===== */
+.result-label{font-size:.92rem;color:var(--text-muted);font-weight:300;position:relative;z-index:1;}
+.result-detail{font-size:.82rem;color:var(--text-dim);margin-top:.5rem;position:relative;z-index:1;font-weight:300;}
 .stack-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-top:2rem;}
 .stack-item{text-align:center;padding:1.4rem 1rem;}
 .stack-item .icon{
   width:38px;height:38px;margin:0 auto .7rem;border-radius:9px;
-  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;color:#07090f;
+  display:flex;align-items:center;justify-content:center;font-weight:300;font-size:.85rem;color:#000;
+  background:rgba(255,255,255,0.8);
 }
-.stack-item .name{font-weight:700;font-size:.88rem;color:var(--text-light);}
-.stack-item .role{font-size:.74rem;color:var(--text-muted);margin-top:.3rem;font-weight:300;}
-
-/* ===== DELIVERABLES ===== */
+.stack-item .name{font-weight:300;font-size:.9rem;color:var(--text-muted);}
+.stack-item .role{font-size:.78rem;color:var(--text-dim);margin-top:.3rem;font-weight:300;}
 .deliv-list{display:flex;flex-direction:column;gap:1rem;margin-top:2rem;}
 .deliv-item{
   display:flex;align-items:center;gap:1.1rem;flex-wrap:wrap;
@@ -393,28 +401,24 @@ p{margin-bottom:.9rem;max-width:42rem;font-weight:300;}
 }
 .deliv-icon{
   width:42px;height:42px;border-radius:10px;flex-shrink:0;
-  background:rgba(255,255,255,.04);display:flex;align-items:center;justify-content:center;font-size:1.1rem;
-  border:1px solid var(--line);
+  background:rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:center;font-size:1.1rem;
+  border:1px solid var(--border);
 }
-.deliv-text strong{display:block;font-size:.95rem;color:var(--text-light);font-weight:600;}
-.deliv-text span{font-size:.82rem;color:var(--text-muted);font-weight:300;}
+.deliv-text strong{display:block;font-size:.95rem;color:var(--text-muted);font-weight:300;}
+.deliv-text span{font-size:.85rem;color:var(--text-dim);font-weight:300;}
 .deliv-link{
-  margin-left:auto;font-size:.82rem;font-weight:700;color:var(--accent-terracotta);
+  margin-left:auto;font-size:.85rem;font-weight:300;color:var(--text-muted);
   text-decoration:none;flex-shrink:0;white-space:nowrap;transition:color .25s;
 }
-.deliv-link:hover{color:var(--accent-signal);}
-
-/* ===== FOOTER ===== */
-footer{padding:3.5rem 2rem;text-align:center;font-size:.85rem;color:var(--text-muted);position:relative;}
+.deliv-link:hover{color:var(--text);}
+footer{padding:3.5rem 2rem;text-align:center;font-size:.85rem;color:var(--text-dim);position:relative;font-weight:300;}
 footer .foot-brand{
-  color:var(--text-light);font-family:'Cormorant Garamond',serif;font-weight:700;font-size:1.3rem;
+  color:var(--text-muted);font-weight:300;font-size:1.3rem;
   margin-bottom:.5rem;display:flex;align-items:center;justify-content:center;gap:.5rem;
 }
-footer .foot-brand .dot{width:7px;height:7px;border-radius:50%;background:var(--accent-terracotta);}
-footer a{color:var(--accent-terracotta);text-decoration:none;}
-footer a:hover{color:var(--accent-signal);}
-
-/* ===== RESPONSIVE ===== */
+footer .foot-brand .dot{width:7px;height:7px;border-radius:50%;background:var(--text-muted);}
+footer a{color:var(--text-muted);text-decoration:none;}
+footer a:hover{color:var(--text);}
 @media (max-width:760px){
   .ctx-grid,.split,.shot-grid,.results-grid{grid-template-columns:1fr;}
   .stack-grid{grid-template-columns:repeat(2,1fr);}
@@ -429,10 +433,7 @@ footer a:hover{color:var(--accent-signal);}
   .flow-branches{margin-left:0;padding-left:.9rem;}
   .deliv-link{margin-left:0;width:100%;}
   .main-header{padding:1.1rem 1.2rem;}
-  .lang-switcher{
-    bottom:1.2rem;left:50%;right:auto;
-    transform:translateX(-50%);
-  }
+  .lang-switcher{bottom:1.2rem;left:50%;right:auto;transform:translateX(-50%);}
   .lang-switcher.hidden{transform:translateX(-50%) translateY(150%);}
   .music-btn{bottom:1.2rem;right:1.2rem;width:46px;height:46px;}
 }
@@ -440,42 +441,37 @@ footer a:hover{color:var(--accent-signal);}
 </head>
 <body>
 
-<!-- Custom cursor: little roof -->
 <div class="cursor-roof" id="cursor">
   <svg viewBox="0 0 28 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <linearGradient id="roofGrad" x1="14" y1="0" x2="14" y2="24" gradientUnits="userSpaceOnUse">
-        <stop offset="0%" stop-color="#e0916a" stop-opacity="0.95"/>
-        <stop offset="100%" stop-color="#6be3b4" stop-opacity="0.55"/>
+        <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9"/>
+        <stop offset="100%" stop-color="#888888" stop-opacity="0.5"/>
       </linearGradient>
     </defs>
     <path d="M14 1L1 11h4v12h18V11h4L14 1Z" fill="url(#roofGrad)"/>
-    <rect x="11" y="15" width="6" height="8" fill="rgba(7,9,15,0.5)"/>
+    <rect x="11" y="15" width="6" height="8" fill="rgba(0,0,0,0.4)"/>
   </svg>
 </div>
 
-<!-- Header -->
 <header class="main-header" id="mainHeader">
   <div class="header-logo"><span class="dot"></span> RealityPraha · AI Ops</div>
   <nav class="header-nav">
-    <a href="#context" data-i18n="nav_context">Context</a>
-    <a href="#problem" data-i18n="nav_problem">Problem</a>
-    <a href="#process" data-i18n="nav_process">Process</a>
-    <a href="#workflow" data-i18n="nav_workflow">Workflow</a>
-    <a href="#results" data-i18n="nav_results">Results</a>
-    <a href="#stack" data-i18n="nav_stack">Stack</a>
-    <a href="#deliverables" data-i18n="nav_files">Files</a>
+    <a href="#context">Context</a>
+    <a href="#problem">Problem</a>
+    <a href="#process">Process</a>
+    <a href="#workflow">Workflow</a>
+    <a href="#results">Results</a>
+    <a href="#stack">Stack</a>
+    <a href="#deliverables">Files</a>
   </nav>
 </header>
 
-<!-- Language Switcher -->
 <div class="lang-switcher" id="langSwitcher">
-  <button class="lang-btn active" data-lang="uk">UA</button>
-  <button class="lang-btn" data-lang="en">EN</button>
+  <button class="lang-btn active" data-lang="en">EN</button>
   <button class="lang-btn" data-lang="cs">CZ</button>
 </div>
 
-<!-- Music Button -->
 <button class="music-btn" id="musicBtn" aria-label="Toggle ambient music">
   <svg id="musicIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
   <div class="eq-bars" id="eqBars"><span class="eq-bar"></span><span class="eq-bar"></span><span class="eq-bar"></span></div>
@@ -485,7 +481,6 @@ footer a:hover{color:var(--accent-signal);}
   <source src="t.me_DoZZaMuZiK-Trade it for the Night ~ HAEVN.mp3" type="audio/mpeg">
 </audio>
 
-<!-- Background -->
 <div class="ocean-atmosphere">
   <div class="blob blob-1"></div>
   <div class="blob blob-2"></div>
@@ -494,8 +489,7 @@ footer a:hover{color:var(--accent-signal);}
   <canvas id="particles-canvas"></canvas>
   <div class="skyline-bg">
     <svg viewBox="0 0 1200 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M0,200 L0,140 L60,140 L60,90 L120,90 L120,140 L180,140 L180,60 L210,30 L240,60 L240,140 L300,140 L300,100 L360,100 L360,140 L420,140 L420,70 L450,40 L480,70 L480,140 L560,140 L560,80 L620,80 L620,140 L680,140 L680,50 L710,20 L740,50 L740,140 L820,140 L820,95 L880,95 L880,140 L940,140 L940,65 L970,35 L1000,65 L1000,140 L1080,140 L1080,110 L1140,110 L1140,140 L1200,140 L1200,200 Z"
-        fill="#16213a"/>
+      <path d="M0,200 L0,140 L60,140 L60,90 L120,90 L120,140 L180,140 L180,60 L210,30 L240,60 L240,140 L300,140 L300,100 L360,100 L360,140 L420,140 L420,70 L450,40 L480,70 L480,140 L560,140 L560,80 L620,80 L620,140 L680,140 L680,50 L710,20 L740,50 L740,140 L820,140 L820,95 L880,95 L880,140 L940,140 L940,65 L970,35 L1000,65 L1000,140 L1080,140 L1080,110 L1140,110 L1140,140 L1200,140 L1200,200 Z" fill="#111111"/>
     </svg>
   </div>
   <div class="noise-overlay"></div>
@@ -503,135 +497,130 @@ footer a:hover{color:var(--accent-signal);}
 
 <main class="content-wrapper">
 
-  <!-- ===== HERO ===== -->
   <section class="hero">
     <div class="hero-content">
       <div class="elegant-badge">
         <span class="badge-orb"></span>
-        <span data-i18n="badge">AI Automation Case Study</span>
+        <span>AI Automation · Real Project</span>
       </div>
       <h1 class="hero-title">
-        <span data-i18n="hero_title_main">Тікет-агент, який</span><br>
-        <span class="emphasis" data-i18n="hero_title_emphasis">не дає клієнту охолонути</span>
+        <span>A ticket agent that</span><br>
+        <span class="emphasis">never lets the client wait</span>
       </h1>
-      <p class="hero-subtitle" data-i18n="hero_subtitle">
-        Самостійний AI-агент для realitní kancelář RealityPraha: класифікує звернення
-        клієнтів за хвилини, призначає власника, рахує SLA-дедлайн і ескалує
-        прострочені тікети — без диспетчера.
+      <p class="hero-subtitle">
+        An autonomous AI agent built for RealityPraha real estate office in Prague:
+        classifies client requests in under a minute, assigns the right person,
+        calculates SLA deadlines, and escalates overdue tickets — zero human dispatchers.
       </p>
       <div class="hero-meta">
         <div class="hero-meta-item">
-          <div class="label" data-i18n="meta_title">Title</div>
+          <div class="label">Project</div>
           <div class="val">AI Ticket Routing + SLA Escalation Agent</div>
         </div>
         <div class="hero-meta-item">
-          <div class="label" data-i18n="meta_industry">Industry</div>
-          <div class="val" data-i18n="meta_industry_val">Real Estate · Praha, ČR</div>
+          <div class="label">Industry</div>
+          <div class="val">Real Estate · Prague, Czech Republic</div>
         </div>
         <div class="hero-meta-item">
-          <div class="label" data-i18n="meta_buildtime">Build time</div>
-          <div class="val" data-i18n="meta_buildtime_val">≈ 8 годин (Модуль 5)</div>
+          <div class="label">Build time</div>
+          <div class="val">≈ 8 hours</div>
         </div>
         <div class="hero-meta-item">
-          <div class="label" data-i18n="meta_stack">Stack</div>
+          <div class="label">Stack</div>
           <div class="val">n8n · OpenAI · Sheets · Slack · Gmail</div>
         </div>
       </div>
       <div class="scroll-cue">
         <div class="line"></div>
-        <span data-i18n="scroll">Scroll</span>
+        <span>Scroll</span>
       </div>
     </div>
   </section>
 
-  <!-- ===== CONTEXT ===== -->
   <section class="block" id="context">
     <div class="wrap">
-      <div class="eyebrow"><span class="idx">01</span> <span data-i18n="ctx_eyebrow">Context</span></div>
-      <h2 class="title" data-i18n="ctx_title">Бізнес, який живе у поштовій скриньці</h2>
-      <p class="lead" data-i18n="ctx_lead">
-        RealityPraha — невелика realitní kancelář у Празі: 6 людей (3 makléři, юрист,
-        office-менеджер і директор), 15–30 звернень на день через info@realitypraha.cz
-        та форму на сайті.
+      <div class="eyebrow"><span class="idx">01</span> <span>Context</span></div>
+      <h2 class="title">A business that lives in the inbox</h2>
+      <p class="lead">
+        RealityPraha is a small real estate office in Prague: 6 people (3 agents, a lawyer,
+        office manager, and director), processing 15–30 inquiries per day through
+        info@realitypraha.cz and the website contact form.
       </p>
       <div class="ctx-grid">
-        <div class="glass ctx-card">
-          <h4 data-i18n="ctx_card1_h">Поточний процес (до автоматизації)</h4>
+        <div class="glass ctx-card"><div class="card-inner">
+          <h4>Current process (before automation)</h4>
           <ul class="ctx-list">
-            <li data-i18n="ctx_card1_li1">Усі листи падають у спільну скриньку info@realitypraha.cz</li>
-            <li data-i18n="ctx_card1_li2">Makléři вручну читають і сортують пошту 2–3 рази на день</li>
-            <li data-i18n="ctx_card1_li3">Пріоритет визначається «на око» — залежно від настрою і завантаженості</li>
-            <li data-i18n="ctx_card1_li4">Юридичні питання та скарги змішані зі стандартними дотазами і рекламою</li>
+            <li>All emails land in a shared inbox info@realitypraha.cz</li>
+            <li>Agents manually read and sort mail 2–3 times a day</li>
+            <li>Priority is determined by eye — depending on mood and workload</li>
+            <li>Legal questions and complaints are mixed with standard inquiries and ads</li>
           </ul>
-        </div>
-        <div class="glass ctx-card">
-          <h4 data-i18n="ctx_card2_h">Команда та категорії</h4>
+        </div></div>
+        <div class="glass ctx-card"><div class="card-inner">
+          <h4>Team and categories</h4>
           <ul class="ctx-list">
-            <li data-i18n="ctx_card2_li1">Property Inquiry / Viewing Request → Jan Novák</li>
-            <li data-i18n="ctx_card2_li2">Pricing → Petra Horáková</li>
-            <li data-i18n="ctx_card2_li3">Complaint → Martin Šimek (office manažer)</li>
-            <li data-i18n="ctx_card2_li4">Legal Question → Eva Čermáková (právník)</li>
-            <li data-i18n="ctx_card2_li5">Spam → ignorovat</li>
+            <li>Property Inquiry / Viewing Request → Jan Novák</li>
+            <li>Pricing → Petra Horáková</li>
+            <li>Complaint → Martin Šimek (office manager)</li>
+            <li>Legal Question → Eva Čermáková (lawyer)</li>
+            <li>Spam → ignore</li>
           </ul>
-        </div>
+        </div></div>
       </div>
     </div>
   </section>
 
-  <!-- ===== PROBLEM / SOLUTION ===== -->
   <section class="block" id="problem">
     <div class="wrap">
-      <div class="eyebrow"><span class="idx">02</span> <span data-i18n="prob_eyebrow">Problem & Solution</span></div>
-      <h2 class="title" data-i18n="prob_title">VIP-клієнт чекає в одній черзі зі спамом</h2>
-      <p class="lead" data-i18n="prob_lead">
-        Найдорожча дірка в клієнтському сервісі — час між тим, як прийшов лист, і тим,
-        як хтось узяв його в роботу.
+      <div class="eyebrow"><span class="idx">02</span> <span>Problem & Solution</span></div>
+      <h2 class="title">A VIP client waits in the same queue as spam</h2>
+      <p class="lead">
+        The biggest leak in customer service is the time between when an email arrives
+        and when someone actually picks it up.
       </p>
       <div class="split">
-        <div class="glass split-card problem">
-          <h3 data-i18n="prob_card1_h">Що не працювало</h3>
+        <div class="glass split-card problem"><div class="card-inner">
+          <h3>What wasn't working</h3>
           <ul>
-            <li data-i18n="prob_card1_li1">VIP-запит на перегляд квартири за 8,5 млн Kč губився серед реклами та "Як підготуватися до прохідки"</li>
-            <li data-i18n="prob_card1_li2">Скарга з погрозою судовим позовом могла чекати відповіді кілька днів</li>
-            <li data-i18n="prob_card1_li3">Жодного SLA — "відповімо коли руки дійдуть"</li>
-            <li data-i18n="prob_card1_li4">Ескалація відсутня: якщо makléř не відповів, ніхто про це не дізнається</li>
+            <li>A VIP request to view an 8.5M Kč apartment got lost among ads and walking tips</li>
+            <li>A complaint threatening legal action could wait days for a response</li>
+            <li>No SLA at all — "we'll reply when we get to it"</li>
+            <li>No escalation: if an agent didn't respond, nobody found out</li>
           </ul>
-        </div>
-        <div class="glass split-card solution">
-          <h3 data-i18n="prob_card2_h">Яка логіка побудована</h3>
+        </div></div>
+        <div class="glass split-card solution"><div class="card-inner">
+          <h3>What logic was built</h3>
           <ul>
-            <li data-i18n="prob_card2_li1">AI Classifier з Chain of Thought читає кожен лист і визначає category → priority → owner → sla_minutes</li>
-            <li data-i18n="prob_card2_li2">Reasoning на 3 речення за вимірами naléhavost / obchodní dopad / kontext klienta</li>
-            <li data-i18n="prob_card2_li3">SLA-таймер: P1 = 15 хв, P2 = 2 год, P3 = 24 год, P4 = 48 год</li>
-            <li data-i18n="prob_card2_li4">3-рівнева ескалація: Slack DM власнику → Slack #cx-leads тімліду → email директору</li>
+            <li>AI Classifier with Chain of Thought reads each email and determines category → priority → owner → sla_minutes</li>
+            <li>3-sentence reasoning by criteria: urgency / business impact / client context</li>
+            <li>SLA timer: P1 = 15 min, P2 = 2 hrs, P3 = 24 hrs, P4 = 48 hrs</li>
+            <li>3-level escalation: Slack DM to owner → Slack #cx-leads to team lead → email to director</li>
           </ul>
-        </div>
+        </div></div>
       </div>
     </div>
   </section>
 
-  <!-- ===== PROCESS ===== -->
   <section class="block" id="process">
     <div class="wrap">
-      <div class="eyebrow"><span class="idx">03</span> <span data-i18n="proc_eyebrow">Process</span></div>
-      <h2 class="title" data-i18n="proc_title">Від промпту до робочого агента</h2>
-
-      <div class="glass">
+      <div class="eyebrow"><span class="idx">03</span> <span>Process</span></div>
+      <h2 class="title">From prompt to working agent</h2>
+      <div class="glass"><div class="card-inner">
         <div class="process-step">
           <div class="process-num">01</div>
           <div>
-            <h4 data-i18n="proc1_h">Prompt design — System Message з 5 блоками</h4>
-            <p data-i18n-html="proc1_p">
-              Промпт AI Classifier побудований за фреймворком: <b>Роль</b> (старший
-              координатор підтримки RealityPraha) → <b>Контекст</b> (6 категорій,
-              P1–P4 з SLA-хвилинами, власники) → <b>Інструкція з вимірами</b>
-              (спеціальні тригери — слова "žaloba", "soud", "hrozím" завжди дають P1)
-              → <b>Chain of Thought</b> (обов'язковий аналіз naléhavost / obchodní
-              dopad / kontext klienta) → <b>Формат відповіді</b> (строгий JSON).
+            <h4>Prompt design — System Message with 5 blocks</h4>
+            <p>
+              The AI Classifier prompt follows a framework: <b>Role</b> (senior support
+              coordinator at RealityPraha) → <b>Context</b> (6 categories, P1–P4 with
+              SLA minutes, owners) → <b>Criteria instructions</b> (special triggers —
+              words "žaloba", "soud", "hrozím" always yield P1) → <b>Chain of Thought</b>
+              (mandatory analysis: urgency / business impact / client context) →
+              <b>Output format</b> (strict JSON).
             </p>
             <div class="prompt-block">
-<div><span class="k">role:</span> "Jsi star&scaron;&iacute; koordin&aacute;tor z&aacute;kaznick&eacute; podpory realitn&iacute; kancel&aacute;&#345;e RealityPraha..."</div>
-<div><span class="k">trigger:</span> Legal Question &rarr; vždy <span class="s">P1</span>, requires_human=true</div>
+<div><span class="k">role:</span> "Jsi starší koordinátor zákaznické podpory realitní kanceláře RealityPraha..."</div>
+<div><span class="k">trigger:</span> Legal Question → always <span class="s">P1</span>, requires_human=true</div>
 <div><span class="k">output:</span> { category, priority, owner, sla_minutes, reasoning, summary, customer_sentiment }</div>
             </div>
             <div class="tag-row">
@@ -641,18 +630,17 @@ footer a:hover{color:var(--accent-signal);}
             </div>
           </div>
         </div>
-
         <div class="process-step">
           <div class="process-num">02</div>
           <div>
-            <h4 data-i18n="proc2_h">API integration — OpenAI + Google Sheets + Slack</h4>
-            <p data-i18n-html="proc2_p">
-              AI Agent node (n8n LangChain) викликає OpenAI Chat Model і повертає
-              строго структурований JSON. Результат "розплющується" (Flatten Result)
-              у плоский об'єкт із додатковим полем <code>sla_deadline</code>, яке
-              рахується як <code>created_at + sla_minutes</code> у ISO 8601. Дані
-              пишуться в Google Sheets через OAuth2, а сповіщення йдуть у Slack
-              каналу <code>#cx-tickets</code> через окремий webhook на власника.
+            <h4>API integration — OpenAI + Google Sheets + Slack</h4>
+            <p>
+              The AI Agent node (n8n LangChain) calls OpenAI Chat Model and returns
+              a strictly structured JSON. The result is flattened into a flat object
+              with an additional <code>sla_deadline</code> field, calculated as
+              <code>created_at + sla_minutes</code> in ISO 8601. Data is written to
+              Google Sheets via OAuth2, and notifications are sent to the
+              <code>#cx-tickets</code> Slack channel through a separate webhook to the owner.
             </p>
             <div class="tag-row">
               <span class="tag">Gmail OAuth2</span>
@@ -662,20 +650,19 @@ footer a:hover{color:var(--accent-signal);}
             </div>
           </div>
         </div>
-
         <div class="process-step">
           <div class="process-num">03</div>
           <div>
-            <h4 data-i18n="proc3_h">n8n workflow — два паралельних трека</h4>
-            <p data-i18n-html="proc3_p1">
-              <b>Трек входу:</b> Gmail Trigger (1 хв) → Collect Ticket Context →
-              AI Classifier → Flatten Result → фільтр «Не спам?» → паралельно
+            <h4>n8n workflow — two parallel tracks</h4>
+            <p>
+              <b>Inbound track:</b> Gmail Trigger (1 min) → Collect Ticket Context →
+              AI Classifier → Flatten Result → "Not spam?" filter → in parallel
               Log → Sheets + Slack: Notify Owner.
             </p>
-            <p data-i18n-html="proc3_p2">
-              <b>SLA Watcher трек:</b> Schedule Trigger (5 хв) → Read Open Tickets →
-              IF (SLA Breached?) → Compute Escalation Level → Switch by Level →
-              L0 (Slack DM owner) / L1 (Slack #cx-leads тімліду) / L2 (email директору).
+            <p>
+              <b>SLA Watcher track:</b> Schedule Trigger (5 min) → Read Open Tickets →
+              IF (SLA breached?) → Compute Escalation Level → Switch by Level →
+              L0 (Slack DM to owner) / L1 (Slack #cx-leads to team lead) / L2 (email to director).
             </p>
             <div class="tag-row">
               <span class="tag">24 nodes</span>
@@ -684,796 +671,486 @@ footer a:hover{color:var(--accent-signal);}
             </div>
           </div>
         </div>
-      </div>
+      </div></div>
     </div>
   </section>
 
-  <!-- ===== WORKFLOW ===== -->
   <section class="block" id="workflow">
     <div class="wrap">
-      <div class="eyebrow"><span class="idx">04</span> <span data-i18n="wf_eyebrow">Workflow</span></div>
-      <h2 class="title" data-i18n="wf_title">Архітектура двох треків</h2>
-      <p class="lead" data-i18n="wf_lead">Спрощена схема обох n8n-воркфлоу — вхідний трек класифікації та SLA-вотчер з ескалацією.</p>
-
-      <div class="glass diagram-wrap">
-        <div class="diagram-title" data-i18n="wf_track1_title">Track 1 — Вхід тікета (кожну хвилину)</div>
-        <div class="diagram-caption" data-i18n="wf_track1_cap">Лист → AI Classifier → запис у Sheets + сповіщення власнику</div>
+      <div class="eyebrow"><span class="idx">04</span> <span>Workflow</span></div>
+      <h2 class="title">Architecture of two tracks</h2>
+      <p class="lead">Simplified diagram of both n8n workflows — the inbound classification track and the SLA watcher with escalation.</p>
+      <div class="glass diagram-wrap"><div class="card-inner">
+        <div class="diagram-title">Track 1 — Ticket intake (every minute)</div>
+        <div class="diagram-caption">Email → AI classifier → log to Sheets + notify owner</div>
         <div class="flow-track">
           <div class="flow-row">
             <div class="flow-node trigger">📧 Gmail Trigger</div>
-            <div class="flow-arrow">&rarr;</div>
-            <div class="flow-node" data-i18n="wf_collect_ctx">Collect Ticket Context</div>
-            <div class="flow-arrow">&rarr;</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node">Collect Ticket Context</div>
+            <div class="flow-arrow">→</div>
             <div class="flow-node ai">🧠 AI Classifier (CoT)</div>
-            <div class="flow-arrow">&rarr;</div>
-            <div class="flow-node" data-i18n="wf_flatten">Flatten Result</div>
-            <div class="flow-arrow">&rarr;</div>
-            <div class="flow-node decision" data-i18n="wf_not_spam">Не спам?</div>
-            <div class="flow-arrow">&rarr;</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node">Flatten Result</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node decision">Not spam?</div>
+            <div class="flow-arrow">→</div>
             <div class="flow-node output">📊 Log → Sheets</div>
-            <div class="flow-arrow">&rarr;</div>
+            <div class="flow-arrow">→</div>
             <div class="flow-node output">💬 Slack: Notify Owner</div>
           </div>
         </div>
-
-        <div class="diagram-title" data-i18n="wf_track2_title">Track 2 — SLA Watcher (кожні 5 хв)</div>
-        <div class="diagram-caption" data-i18n="wf_track2_cap">Перевірка прострочених тікетів і ескалація за рівнями</div>
+        <div class="diagram-title">Track 2 — SLA Watcher (every 5 min)</div>
+        <div class="diagram-caption">Checking overdue tickets and escalating by level</div>
         <div class="flow-track">
           <div class="flow-row">
             <div class="flow-node trigger">⏱ SLA Watcher</div>
-            <div class="flow-arrow">&rarr;</div>
-            <div class="flow-node" data-i18n="wf_read_tickets">Read Open Tickets</div>
-            <div class="flow-arrow">&rarr;</div>
-            <div class="flow-node decision">SLA Breached?</div>
-            <div class="flow-arrow">&rarr;</div>
-            <div class="flow-node" data-i18n="wf_compute_esc">Compute Escalation Level</div>
-            <div class="flow-arrow">&rarr;</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node">Read Open Tickets</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node decision">SLA breached?</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node">Compute Escalation Level</div>
+            <div class="flow-arrow">→</div>
             <div class="flow-node decision">Switch by Level</div>
           </div>
           <div class="flow-branches">
-            <div class="flow-branch"><span class="lvl lvl-l0">L0</span> <span data-i18n="wf_l0">0 хв → Slack DM власнику (м'яке нагадування)</span></div>
-            <div class="flow-branch"><span class="lvl lvl-l1">L1</span> <span data-i18n="wf_l1">+30 хв → Slack #cx-leads, тімлід отримує контекст і reasoning</span></div>
-            <div class="flow-branch"><span class="lvl lvl-l2">L2</span> <span data-i18n="wf_l2">+60 хв → Email директору з повним таймлайном</span></div>
+            <div class="flow-branch"><span class="lvl lvl-l0">L0</span> <span>0 min → Slack DM to owner (gentle reminder)</span></div>
+            <div class="flow-branch"><span class="lvl lvl-l1">L1</span> <span>+30 min → Slack #cx-leads, team lead gets context and reasoning</span></div>
+            <div class="flow-branch"><span class="lvl lvl-l2">L2</span> <span>+60 min → Email to director with full timeline</span></div>
           </div>
         </div>
-      </div>
+      </div></div>
     </div>
   </section>
 
-  <!-- ===== SCREENSHOTS ===== -->
   <section class="block" id="screens">
     <div class="wrap">
-      <div class="eyebrow"><span class="idx">05</span> <span data-i18n="shots_eyebrow">Screenshots</span></div>
-      <h2 class="title" data-i18n="shots_title">Як це працює у продакшені</h2>
+      <div class="eyebrow"><span class="idx">05</span> <span>Screenshots</span></div>
+      <h2 class="title">How it works in production</h2>
       <div class="shot-grid">
         <div class="glass shot full">
           <img src="photo_2026-06-14_15-57-35.jpg" alt="n8n workflow Track 1">
-          <div class="shot-cap" data-i18n-html="shot1_cap"><b>n8n — Track 1 (вхід тікета):</b> Gmail Trigger → Collect Ticket Context → AI Classifier (Chain of Thought) → Flatten Result → Не спам? → паралельно Log → Tickets Sheet + Slack: Notify Owner. У панелі Output — повний JSON класифікації (category, priority, owner, sla_minutes, reasoning, sentiment).</div>
+          <div class="shot-cap"><i>n8n — Track 1 (ticket intake):</i> Gmail Trigger → Collect Ticket Context → AI Classifier (Chain of Thought) → Flatten Result → Not spam? → in parallel Log → Tickets Sheet + Slack: Notify Owner. Output panel shows full classification JSON.</div>
         </div>
         <div class="glass shot full">
           <img src="photo_2026-06-14_15-57-32.jpg" alt="n8n full workflow overview">
-          <div class="shot-cap" data-i18n-html="shot2_cap"><b>n8n — обидва треки разом:</b> зверху вхідний трек класифікації, знизу SLA Watcher (every 5m) → Read Open Tickets → SLA Breached? → Compute Escalation Level → Switch by Level → Slack: Remind Owner (L0) / Notify TL (L1) / Email Director (L2).</div>
+          <div class="shot-cap"><i>n8n — both tracks together:</i> inbound classification track on top, SLA Watcher (every 5m) on the bottom → Read Open Tickets → SLA Breached? → Compute Escalation Level → Switch by Level.</div>
         </div>
         <div class="glass shot full">
           <img src="photo_2026-06-14_15-57-35.jpg" alt="n8n Track 2 SLA watcher run">
-          <div class="shot-cap" data-i18n-html="shot3_cap"><b>n8n — Track 2 успішний запуск:</b> Switch by Level спрацював, вивід ноди Slack: Remind Owner (L0)1 показує <code>ok: true</code> — повідомлення про прострочення SLA доставлено в Slack.</div>
+          <div class="shot-cap"><i>n8n — Track 2 successful run:</i> Switch by Level triggered, Slack: Remind Owner (L0) node output shows <code>ok: true</code> — SLA breach notification delivered to Slack.</div>
         </div>
         <div class="glass shot full">
           <img src="photo_2026-06-14_15-57-29.jpg" alt="Google Sheets tickets log">
-          <div class="shot-cap" data-i18n-html="shot4_cap"><b>Tickets Log у Google Sheets:</b> 10 рядків з полями category, priority, owner, sla_minutes, sla_deadline (ISO 8601) та reasoning — 3 речення обґрунтування за naléhavost / obchodní dopad / kontext klienta для кожного тікета.</div>
+          <div class="shot-cap"><i>Tickets Log in Google Sheets:</i> 10 rows with fields: category, priority, owner, sla_minutes, sla_deadline (ISO 8601) and reasoning — 3 sentences of justification for each ticket.</div>
         </div>
         <div class="glass shot">
           <img src="photo_2026-06-14_15-57-41.jpg" alt="Slack classification message">
-          <div class="shot-cap" data-i18n-html="shot5_cap"><b>Slack — нова класифікація:</b> «🚨 Новий тікет — P4. Власник: null, Категорія: Spam, SLA: 2880 хв, Sentiment: neutral».</div>
+          <div class="shot-cap"><i>Slack — new classification:</i> "🚨 New ticket — P4. Owner: none, Category: Spam, SLA: 2880 min, Sentiment: neutral".</div>
         </div>
         <div class="glass shot">
           <img src="photo_2026-06-14_15-57-38.jpg" alt="Slack SLA escalation message">
-          <div class="shot-cap" data-i18n-html="shot6_cap"><b>SLA-ескалація L0:</b> «⚠️ Нагадування — SLA прострочено. Власнику m.simek: тікет P1 прострочено на 65 хв. Тема: Stížnost na makléře — požaduji vrácení zálohy».</div>
+          <div class="shot-cap"><i>SLA escalation L0:</i> "⚠️ Reminder — SLA breached. Owner m.simek: P1 ticket overdue by 65 min. Subject: Stížnost na makléře — požaduji vrácení zálohy".</div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ===== RESULTS ===== -->
   <section class="block" id="results">
     <div class="wrap">
-      <div class="eyebrow"><span class="idx">06</span> <span data-i18n="res_eyebrow">Results</span></div>
-      <h2 class="title" data-i18n="res_title">Що змінюється для команди</h2>
-      <p class="lead" data-i18n="res_lead">Розрахунок на основі поточного об'єму 15–30 тікетів/день та звичної ручної маршрутизації 2–3 рази на день.</p>
+      <div class="eyebrow"><span class="idx">06</span> <span>Results</span></div>
+      <h2 class="title">What changes for the team</h2>
+      <p class="lead">Based on current volume of 15–30 tickets/day and typical manual routing 2–3 times a day.</p>
       <div class="results-grid">
-        <div class="glass result-card">
-          <div class="result-num">&lt; 1 хв</div>
-          <div class="result-label" data-i18n="res1_label">час до класифікації листа</div>
-          <div class="result-detail" data-i18n="res1_detail">замість 2–4 годин очікування ручного перегляду пошти</div>
-        </div>
-        <div class="glass result-card">
-          <div class="result-num">15 хв</div>
-          <div class="result-label" data-i18n="res2_label">SLA для P1 (Legal / Complaint)</div>
-          <div class="result-detail" data-i18n="res2_detail">автоматичний таймер + 3-рівнева ескалація замість "коли руки дійдуть"</div>
-        </div>
-        <div class="glass result-card">
+        <div class="glass result-card"><div class="card-inner">
+          <div class="result-num">&lt; 1 min</div>
+          <div class="result-label">time to classify an email</div>
+          <div class="result-detail">instead of 2–4 hours waiting for manual mail review</div>
+        </div></div>
+        <div class="glass result-card"><div class="card-inner">
+          <div class="result-num">15 min</div>
+          <div class="result-label">SLA for P1 (Legal / Complaint)</div>
+          <div class="result-detail">automatic timer + 3-level escalation instead of "when we get to it"</div>
+        </div></div>
+        <div class="glass result-card"><div class="card-inner">
           <div class="result-num">100%</div>
-          <div class="result-label" data-i18n="res3_label">тікетів отримують власника</div>
-          <div class="result-detail" data-i18n="res3_detail">кожен лист записується в Sheets з owner — жоден запит не "падає в чорну діру"</div>
-        </div>
-        <div class="glass result-card">
+          <div class="result-label">tickets get an owner</div>
+          <div class="result-detail">every email is logged in Sheets with owner — no request falls through</div>
+        </div></div>
+        <div class="glass result-card"><div class="card-inner">
           <div class="result-num">10/10</div>
-          <div class="result-label" data-i18n="res4_label">тестових тікетів класифіковано</div>
-          <div class="result-detail" data-i18n="res4_detail">P1–P4 коректно присвоєні, reasoning 2–3 речення на кожен</div>
-        </div>
-        <div class="glass result-card">
+          <div class="result-label">test tickets classified</div>
+          <div class="result-detail">P1–P4 correctly assigned, 2–3 sentence reasoning for each</div>
+        </div></div>
+        <div class="glass result-card"><div class="card-inner">
           <div class="result-num">24</div>
-          <div class="result-label" data-i18n="res5_label">nodes у production workflow</div>
-          <div class="result-detail" data-i18n="res5_detail">2 паралельних трека: вхідна класифікація + SLA-вотчер</div>
-        </div>
-        <div class="glass result-card">
+          <div class="result-label">nodes in production workflow</div>
+          <div class="result-detail">2 parallel tracks: inbound classification + SLA watcher</div>
+        </div></div>
+        <div class="glass result-card"><div class="card-inner">
           <div class="result-num">≈ $0.20</div>
-          <div class="result-label" data-i18n="res6_label">вартість на 1 000 тікетів</div>
-          <div class="result-detail" data-i18n="res6_detail">gpt-4o-mini, ≈ $0.0002 за класифікацію одного листа</div>
-        </div>
+          <div class="result-label">cost per 1,000 tickets</div>
+          <div class="result-detail">gpt-4o-mini, ≈ $0.0002 per email classification</div>
+        </div></div>
       </div>
     </div>
   </section>
 
-  <!-- ===== STACK ===== -->
   <section class="block" id="stack">
     <div class="wrap">
-      <div class="eyebrow"><span class="idx">07</span> <span data-i18n="stack_eyebrow">Tech Stack</span></div>
-      <h2 class="title" data-i18n="stack_title">Інструменти під капотом</h2>
+      <div class="eyebrow"><span class="idx">07</span> <span>Tech Stack</span></div>
+      <h2 class="title">Tools under the hood</h2>
       <div class="stack-grid">
-        <div class="glass stack-item">
-          <div class="icon" style="background:#e0916a;">n8n</div>
+        <div class="glass stack-item"><div class="card-inner">
+          <div class="icon">n8n</div>
           <div class="name">n8n Cloud</div>
-          <div class="role" data-i18n="stack1_role">Orchestration</div>
-        </div>
-        <div class="glass stack-item">
-          <div class="icon" style="background:#6be3b4;">AI</div>
+          <div class="role">Orchestration</div>
+        </div></div>
+        <div class="glass stack-item"><div class="card-inner">
+          <div class="icon">AI</div>
           <div class="name">OpenAI API</div>
           <div class="role">gpt-4o-mini, Chain of Thought</div>
-        </div>
-        <div class="glass stack-item">
-          <div class="icon" style="background:#7fae8f;">GS</div>
+        </div></div>
+        <div class="glass stack-item"><div class="card-inner">
+          <div class="icon">GS</div>
           <div class="name">Google Sheets</div>
-          <div class="role" data-i18n="stack3_role">Tickets log + SLA source</div>
-        </div>
-        <div class="glass stack-item">
-          <div class="icon" style="background:#b58fd6;">SL</div>
+          <div class="role">Tickets log + SLA source</div>
+        </div></div>
+        <div class="glass stack-item"><div class="card-inner">
+          <div class="icon">SL</div>
           <div class="name">Slack</div>
-          <div class="role" data-i18n="stack4_role">Notify Owner + escalations</div>
-        </div>
-        <div class="glass stack-item">
-          <div class="icon" style="background:#e0916a;">GM</div>
+          <div class="role">Notify owner + escalations</div>
+        </div></div>
+        <div class="glass stack-item"><div class="card-inner">
+          <div class="icon">GM</div>
           <div class="name">Gmail OAuth2</div>
-          <div class="role" data-i18n="stack5_role">Trigger + Director email</div>
-        </div>
-        <div class="glass stack-item">
-          <div class="icon" style="background:#8d99b3;">JS</div>
+          <div class="role">Trigger + Director email</div>
+        </div></div>
+        <div class="glass stack-item"><div class="card-inner">
+          <div class="icon">JS</div>
           <div class="name">n8n Code / Set</div>
           <div class="role">sla_deadline, escalation_level</div>
-        </div>
-        <div class="glass stack-item">
-          <div class="icon" style="background:#cdd6e8;">IF</div>
+        </div></div>
+        <div class="glass stack-item"><div class="card-inner">
+          <div class="icon">IF</div>
           <div class="name">IF / Switch</div>
-          <div class="role" data-i18n="stack7_role">Spam filter, 3-level routing</div>
-        </div>
-        <div class="glass stack-item">
-          <div class="icon" style="background:#6be3b4;">CZ</div>
-          <div class="name" data-i18n="stack8_name">Czech-language</div>
-          <div class="role" data-i18n="stack8_role">Prompt + UI локалізація</div>
-        </div>
+          <div class="role">Spam filter, 3-level routing</div>
+        </div></div>
+        <div class="glass stack-item"><div class="card-inner">
+          <div class="icon">CZ</div>
+          <div class="name">Czech-language</div>
+          <div class="role">Prompt + UI localization</div>
+        </div></div>
       </div>
     </div>
   </section>
 
-  <!-- ===== DELIVERABLES ===== -->
   <section class="block" id="deliverables">
     <div class="wrap">
-      <div class="eyebrow"><span class="idx">08</span> <span data-i18n="deliv_eyebrow">Deliverables</span></div>
-      <h2 class="title" data-i18n="deliv_title">Файли проєкту</h2>
+      <div class="eyebrow"><span class="idx">08</span> <span>Deliverables</span></div>
+      <h2 class="title">Project files</h2>
       <div class="deliv-list">
-        <div class="glass deliv-item">
+        <div class="glass deliv-item"><div class="card-inner" style="display:flex;align-items:center;gap:1.1rem;flex-wrap:wrap;">
           <div class="deliv-icon">📄</div>
           <div class="deliv-text">
-            <strong>RealityPraha — AI Ticket Routing + SLA + Escalation (Module 5).json</strong>
-            <span data-i18n="deliv1_desc">Експортований n8n workflow, 24 nodes, обидва треки</span>
+            <strong>RealityPraha — AI Ticket Routing + SLA + Escalation.json</strong>
+            <span>Exported n8n workflow, 24 nodes, both tracks</span>
           </div>
-          <a class="deliv-link" href="https://drive.google.com/file/d/1wVJSebHEHTgj7PlQ9UnG758lspNfwNrl/view?usp=sharing" target="_blank" data-i18n="deliv1_link">Google Drive →</a>
-        </div>
-        <div class="glass deliv-item">
+          <a class="deliv-link" href="https://drive.google.com/file/d/1wVJSebHEHTgj7PlQ9UnG758lspNfwNrl/view?usp=sharing" target="_blank">Google Drive →</a>
+        </div></div>
+        <div class="glass deliv-item"><div class="card-inner" style="display:flex;align-items:center;gap:1.1rem;flex-wrap:wrap;">
           <div class="deliv-icon">📊</div>
           <div class="deliv-text">
             <strong>RealityPraha_Tickets_Log.xlsx / Google Sheets</strong>
-            <span data-i18n="deliv2_desc">10 класифікованих тікетів з повним reasoning та sla_deadline</span>
+            <span>10 classified tickets with full reasoning and sla_deadline</span>
           </div>
-          <a class="deliv-link" href="https://docs.google.com/spreadsheets/d/1tBYLUV1oPgw8G3iz2AxkTi8JgQImxUWP/edit?usp=sharing&ouid=117065286798010968342&rtpof=true&sd=true" target="_blank" data-i18n="deliv2_link">Google Sheets →</a>
-        </div>
-        <div class="glass deliv-item">
+          <a class="deliv-link" href="https://docs.google.com/spreadsheets/d/1tBYLUV1oPgw8G3iz2AxkTi8JgQImxUWP/edit?usp=sharing&ouid=117065286798010968342&rtpof=true&sd=true" target="_blank">Google Sheets →</a>
+        </div></div>
+        <div class="glass deliv-item"><div class="card-inner" style="display:flex;align-items:center;gap:1.1rem;flex-wrap:wrap;">
           <div class="deliv-icon">📋</div>
           <div class="deliv-text">
             <strong>Šablona_Tiketu_RealityPraha.md</strong>
-            <span data-i18n="deliv3_desc">Заповнений тікет-флоу: категорії, пріоритети, власники, ескалація</span>
+            <span>Filled ticket flow: categories, priorities, owners, escalation</span>
           </div>
-          <a class="deliv-link" href="#" target="_blank" data-i18n="deliv3_link">Документ →</a>
-        </div>
+          <a class="deliv-link" href="#" target="_blank">Document →</a>
+        </div></div>
       </div>
     </div>
   </section>
 
   <footer>
     <div class="foot-brand"><span class="dot"></span> RealityPraha · AI Ops</div>
-    <p data-i18n="foot_p1">AI Ticket Routing + SLA Escalation Agent — Module 5 case study</p>
-    <p style="margin-top:.5rem;" data-i18n-html="foot_p2">Built with n8n · OpenAI · Google Workspace · Slack — <a href="https://tetiana-a.github.io/aiAutomationDev" target="_blank">tetiana-a.github.io/aiAutomationDev</a></p>
+    <p>AI Ticket Routing + SLA Escalation Agent — Case Study</p>
+    <p style="margin-top:.5rem;">Built with n8n · OpenAI · Google Workspace · Slack — <a href="https://tetiana-a.github.io/aiAutomationDev" target="_blank">tetiana-a.github.io/aiAutomationDev</a></p>
   </footer>
 
 </main>
 
 <script>
-// ===== HEADER HIDE ON SCROLL + SKYLINE FADE =====
-const mainHeader = document.getElementById('mainHeader');
-const skyline = document.querySelector('.skyline-bg');
-let lastScrollTop = 0;
-window.addEventListener('scroll', () => {
-  let st = window.pageYOffset || document.documentElement.scrollTop;
-  if (st > lastScrollTop && st > 50) mainHeader.classList.add('hidden');
+const mainHeader=document.getElementById('mainHeader');
+const skyline=document.querySelector('.skyline-bg');
+let lastScrollTop=0;
+window.addEventListener('scroll',()=>{
+  let st=window.pageYOffset||document.documentElement.scrollTop;
+  if(st>lastScrollTop&&st>50)mainHeader.classList.add('hidden');
   else mainHeader.classList.remove('hidden');
-  lastScrollTop = st;
-  const heroHeight = window.innerHeight;
-  skyline.style.opacity = Math.max(0.5 * (1 - st / heroHeight), 0.18);
-}, {passive:true});
+  lastScrollTop=st;
+  skyline.style.opacity=Math.max(0.35*(1-st/window.innerHeight),0.1);
+},{passive:true});
 
-// ===== CUSTOM CURSOR =====
-const cursor = document.getElementById('cursor');
-let mouseX = window.innerWidth/2, mouseY = window.innerHeight/2, cursorX = mouseX, cursorY = mouseY;
+const cursor=document.getElementById('cursor');
+let mouseX=window.innerWidth/2,mouseY=window.innerHeight/2,cursorX=mouseX,cursorY=mouseY;
 function animateCursor(){
-  cursorX += (mouseX - cursorX) * 0.14;
-  cursorY += (mouseY - cursorY) * 0.14;
-  cursor.style.left = cursorX + 'px';
-  cursor.style.top = cursorY + 'px';
+  cursorX+=(mouseX-cursorX)*0.14;cursorY+=(mouseY-cursorY)*0.14;
+  cursor.style.left=cursorX+'px';cursor.style.top=cursorY+'px';
   requestAnimationFrame(animateCursor);
 }
 animateCursor();
-document.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
-document.querySelectorAll('a, button, .glass').forEach(el=>{
-  el.addEventListener('mouseenter', ()=>cursor.classList.add('hovering'));
-  el.addEventListener('mouseleave', ()=>cursor.classList.remove('hovering'));
+document.addEventListener('mousemove',e=>{mouseX=e.clientX;mouseY=e.clientY;});
+document.querySelectorAll('a,button,.glass').forEach(el=>{
+  el.addEventListener('mouseenter',()=>cursor.classList.add('hovering'));
+  el.addEventListener('mouseleave',()=>cursor.classList.remove('hovering'));
 });
 
-// ===== PARTICLES — drifting data packets =====
-const canvas = document.getElementById('particles-canvas');
-const ctx = canvas.getContext('2d');
+/* ===== PARTICLES ===== */
+const canvas=document.getElementById('particles-canvas');
+const ctx2d=canvas.getContext('2d');
 function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
 resize();
-window.addEventListener('resize', resize);
+window.addEventListener('resize',resize);
+
+function hslToRgb(h,s,l){
+  let r,g,b;
+  if(s===0){r=g=b=l;}else{
+    const hue2rgb=(p,q,t)=>{if(t<0)t+=1;if(t>1)t-=1;if(t<1/6)return p+(q-p)*6*t;if(t<1/2)return q;if(t<2/3)return p+(q-p)*(2/3-t)*6;return p;};
+    const q=l<0.5?l*(1+s):l+s-l*s;const p=2*l-q;
+    r=hue2rgb(p,q,h+1/3);g=hue2rgb(p,q,h);b=hue2rgb(p,q,h-1/3);
+  }
+  return[Math.round(r*255),Math.round(g*255),Math.round(b*255)];
+}
 
 class Packet{
   constructor(){this.reset();}
   reset(){
-    this.x = Math.random()*canvas.width;
-    this.y = canvas.height + Math.random()*200;
-    this.size = Math.random()*3 + 1.5;
-    this.speedY = Math.random()*0.4 + 0.15;
-    this.wobble = Math.random()*Math.PI*2;
-    this.wobbleSpeed = Math.random()*0.015 + 0.005;
-    this.hue = Math.random() > 0.5 ? 'terracotta' : 'signal';
-    this.huePhase = Math.random()*360; // offset for music color cycling
+    this.x=Math.random()*canvas.width;
+    this.y=canvas.height+Math.random()*200;
+    this.size=Math.random()*3+1.5;
+    this.speedY=Math.random()*0.4+0.15;
+    this.wobble=Math.random()*Math.PI*2;
+    this.wobbleSpeed=Math.random()*0.015+0.005;
+    this.brightness=Math.random()*0.4+0.3;
+    /* Each bubble gets its own hue offset so they're all different colors */
+    this.hueOffset=Math.random()*360;
+    /* Individual saturation & lightness for variety */
+    this.baseSat=0.65+Math.random()*0.3;
+    this.baseLight=0.5+Math.random()*0.15;
+    /* Pulse speed for alive feeling */
+    this.pulseSpeed=0.5+Math.random()*1.5;
+    this.pulsePhase=Math.random()*Math.PI*2;
   }
   update(){
-    this.y -= this.speedY;
-    this.wobble += this.wobbleSpeed;
-    this.x += Math.sin(this.wobble)*0.4;
-    if(this.y < -30) this.reset();
+    this.y-=this.speedY;
+    this.wobble+=this.wobbleSpeed;
+    this.x+=Math.sin(this.wobble)*0.4;
+    if(this.y<-30)this.reset();
   }
-  draw(intensity, cyclePhase){
-    let r,g,b, glowAlpha, coreAlpha;
-    if (intensity > 0.001){
-      // Cycle through a richer palette while music plays
-      const baseHue = this.hue === 'terracotta' ? 18 : 160; // terracotta vs signal-green base hues
-      const cycle = (baseHue + this.huePhase + cyclePhase*360) % 360;
-      const [cr,cg,cb] = hslToRgb(cycle/360, 0.55, 0.6);
-      // Blend between the calm base color and the cycling music color by intensity
-      const [br,bg,bb] = this.hue==='terracotta' ? [201,122,82] : [79,184,146];
-      r = Math.round(br + (cr-br)*intensity);
-      g = Math.round(bg + (cg-bg)*intensity);
-      b = Math.round(bb + (cb-bb)*intensity);
-      glowAlpha = 0.22 + intensity * 0.28;
-      coreAlpha = 0.4 + intensity * 0.35;
+  draw(intensity,cyclePhase){
+    let r,g,b,alpha,glowAlpha,glowSize;
+
+    /* Gentle pulse for the core */
+    const pulse=0.85+0.15*Math.sin(cyclePhase*Math.PI*2*this.pulseSpeed+this.pulsePhase);
+
+    if(intensity>0.001){
+      /* ===== COLORFUL MODE when music is ON ===== */
+      alpha=Math.min(1,(this.brightness+intensity*0.45)*pulse);
+
+      /* Cycle hue over time — each bubble at its own offset */
+      const hue=((this.hueOffset+cyclePhase*120)%360)/360;
+      const sat=this.baseSat;
+      const light=this.baseLight+intensity*0.1;
+      [r,g,b]=hslToRgb(hue,sat,light);
+
+      /* Much bigger glow when colorful */
+      glowSize=Math.max(0.1,this.size*(4+intensity*3)*pulse);
+      glowAlpha=0.25+intensity*0.35;
     } else {
-      if(this.hue==='terracotta'){r=201;g=122;b=82;} else {r=79;g=184;b=146;}
-      glowAlpha = 0.22;
-      coreAlpha = 0.4;
+      /* ===== GRAYSCALE when music is OFF ===== */
+      const c=Math.round((200+55*this.brightness)*pulse);
+      r=g=b=c;
+      alpha=this.brightness*pulse;
+      glowSize=Math.max(0.1,this.size*3*pulse);
+      glowAlpha=0.2;
     }
-    const glowSize = this.size * (3 + intensity*1.5);
-    const grad = ctx.createRadialGradient(this.x,this.y,0,this.x,this.y,glowSize);
-    grad.addColorStop(0, `rgba(${r},${g},${b},${glowAlpha})`);
-    grad.addColorStop(1, `rgba(${r},${g},${b},0)`);
-    ctx.beginPath();
-    ctx.arc(this.x,this.y,glowSize,0,Math.PI*2);
-    ctx.fillStyle = grad;
-    ctx.fill();
-    ctx.beginPath();
-    ctx.arc(this.x,this.y,this.size,0,Math.PI*2);
-    ctx.fillStyle = `rgba(${r},${g},${b},${coreAlpha})`;
-    ctx.fill();
+
+    /* Outer glow */
+    const grad=ctx2d.createRadialGradient(this.x,this.y,0,this.x,this.y,glowSize);
+    grad.addColorStop(0,'rgba('+r+','+g+','+b+','+glowAlpha+')');
+    grad.addColorStop(0.4,'rgba('+r+','+g+','+b+','+(glowAlpha*0.4)+')');
+    grad.addColorStop(1,'rgba('+r+','+g+','+b+',0)');
+    ctx2d.beginPath();
+    ctx2d.arc(this.x,this.y,glowSize,0,Math.PI*2);
+    ctx2d.fillStyle=grad;
+    ctx2d.fill();
+
+    /* Core dot */
+    const coreSize=Math.max(0.1,this.size*pulse);
+    ctx2d.beginPath();
+    ctx2d.arc(this.x,this.y,coreSize,0,Math.PI*2);
+    ctx2d.fillStyle='rgba('+r+','+g+','+b+','+alpha+')';
+    ctx2d.fill();
+
+    /* Tiny bright center when colorful */
+    if(intensity>0.3){
+      ctx2d.beginPath();
+      ctx2d.arc(this.x,this.y,Math.max(0.1,coreSize*0.4),0,Math.PI*2);
+      const br=Math.min(255,r+80);
+      const bg2=Math.min(255,g+80);
+      const bb=Math.min(255,b+80);
+      ctx2d.fillStyle='rgba('+br+','+bg2+','+bb+','+(intensity*0.6)+')';
+      ctx2d.fill();
+    }
   }
 }
 
-// Convert HSL (0-1 ranges) to RGB 0-255
-function hslToRgb(h, s, l){
-  let r, g, b;
-  if (s === 0) { r = g = b = l; }
-  else {
-    const hue2rgb = (p, q, t) => {
-      if (t < 0) t += 1;
-      if (t > 1) t -= 1;
-      if (t < 1/6) return p + (q - p) * 6 * t;
-      if (t < 1/2) return q;
-      if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
-      return p;
-    };
-    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-    const p = 2 * l - q;
-    r = hue2rgb(p, q, h + 1/3);
-    g = hue2rgb(p, q, h);
-    b = hue2rgb(p, q, h - 1/3);
-  }
-  return [Math.round(r*255), Math.round(g*255), Math.round(b*255)];
+const packets=[];
+for(let i=0;i<70;i++){const p=new Packet();p.y=Math.random()*canvas.height;packets.push(p);}
+let audioIntensity=0,cyclePhase=0;
+
+function animateParticles(){
+  ctx2d.clearRect(0,0,canvas.width,canvas.height);
+  cyclePhase+=0.0004;
+  for(const p of packets){p.update();p.draw(audioIntensity,cyclePhase);}
+  requestAnimationFrame(animateParticles);
 }
+animateParticles();
 
-const packets = [];
-for(let i=0;i<60;i++){
-  const p = new Packet();
-  p.y = Math.random()*canvas.height;
-  packets.push(p);
-}
+/* ===== MUSIC ===== */
+const musicBtn=document.getElementById('musicBtn');
+const ambientAudio=document.getElementById('ambientAudio');
+let isPlaying=false;
+musicBtn.addEventListener('click',()=>{
+  if(isPlaying){ambientAudio.pause();musicBtn.classList.remove('active');isPlaying=false;}
+  else{ambientAudio.play().then(()=>{musicBtn.classList.add('active');isPlaying=true;}).catch(()=>{});}
+});
+/* Smooth intensity ramp — slow fade in/out for color transition */
+setInterval(()=>{const target=isPlaying?1:0;audioIntensity+=(target-audioIntensity)*0.03;},50);
 
-// musicT: 0 = off, eases to 1 when music is playing (drives color cycling + intensity)
-let musicT = 0;
-let musicCycle = 0;
-function renderFrame(){
-  requestAnimationFrame(renderFrame);
-  ctx.clearRect(0,0,canvas.width,canvas.height);
+/* ===== 5D CARD EFFECT ===== */
+const glassCards=document.querySelectorAll('.glass');
+const observer=new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{if(entry.isIntersecting)entry.target.classList.add('visible');});
+},{threshold:0.08,rootMargin:'0px 0px -30px 0px'});
 
-  const target = window.musicPlaying ? 1 : 0;
-  musicT += (target - musicT) * 0.04;
-  if (musicT > 0.001) musicCycle += 0.0025; // slow hue rotation speed
-
-  packets.forEach(p=>{
-    p.update();
-    p.draw(musicT, musicCycle);
-  });
-}
-renderFrame();
-
-// ===== 3D TILT + LIFT + GLOW ON HOVER =====
-document.querySelectorAll('.glass').forEach(card=>{
-  const maxTilt = 8; // degrees
-
-  card.addEventListener('mouseenter', ()=>{
+glassCards.forEach(card=>{
+  observer.observe(card);
+  card.addEventListener('mousemove',(e)=>{
+    const rect=card.getBoundingClientRect();
+    const x=e.clientX-rect.left;
+    const y=e.clientY-rect.top;
+    const cx=rect.width/2;
+    const cy=rect.height/2;
+    const rotX=((y-cy)/cy)*-8;
+    const rotY=((x-cx)/cx)*8;
+    const tx=((x-cx)/cx)*-2;
+    const ty=((y-cy)/cy)*-2;
+    card.style.transform='perspective(800px) rotateX('+rotX+'deg) rotateY('+rotY+'deg) translateX('+tx+'px) translateY('+ty+'px) scale(1.02)';
+    card.style.setProperty('--gx',(x/rect.width*100)+'%');
+    card.style.setProperty('--gy',(y/rect.height*100)+'%');
+    card.style.setProperty('--tx',tx+'px');
+    card.style.setProperty('--ty',ty+'px');
     card.classList.add('tilting');
   });
-
-  card.addEventListener('mousemove', (e)=>{
-    const rect = card.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const px = x / rect.width;  // 0..1
-    const py = y / rect.height; // 0..1
-
-    const rotateY = (px - 0.5) * maxTilt * 2;   // left/right tilt
-    const rotateX = (0.5 - py) * maxTilt * 2;   // up/down tilt
-
-    card.style.transform =
-      `translateY(-6px) scale(1.015) perspective(1200px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-    card.style.boxShadow = `0 25px 60px rgba(0,0,0,.5), 0 0 40px rgba(201,122,82,.08)`;
-    card.style.setProperty('--gx', `${px*100}%`);
-    card.style.setProperty('--gy', `${py*100}%`);
-  });
-
-  card.addEventListener('mouseleave', ()=>{
+  card.addEventListener('mouseleave',()=>{
+    card.style.transform='';
     card.classList.remove('tilting');
-    card.style.transform = 'translateY(0) scale(1) rotateX(0) rotateY(0)';
-    card.style.boxShadow = '';
   });
 });
-const obs = new IntersectionObserver((entries)=>{
-  entries.forEach((en)=>{
-    if(en.isIntersecting){
-      en.target.classList.add('visible');
-      obs.unobserve(en.target);
-    }
-  });
-},{threshold:0, rootMargin:'0px 0px 150px 0px'});
-document.querySelectorAll('.glass').forEach(el=>obs.observe(el));
 
-// Fallback: reveal everything currently in/near viewport on load,
-// and ensure nothing is permanently stuck at opacity 0.
-function revealInView(){
-  document.querySelectorAll('.glass').forEach(el=>{
-    const r = el.getBoundingClientRect();
-    if (r.top < window.innerHeight + 150 && r.bottom > -150) {
-      el.classList.add('visible');
-    }
-  });
-}
-window.addEventListener('load', revealInView);
-window.addEventListener('scroll', revealInView, {passive:true});
-setTimeout(()=>document.querySelectorAll('.glass').forEach(el=>el.classList.add('visible')), 2500);
-
-// ===== TRANSLATIONS =====
-const translations = {
-  uk: {
-    nav_context: "Context", nav_problem: "Problem", nav_process: "Process",
-    nav_workflow: "Workflow", nav_results: "Results", nav_stack: "Stack", nav_files: "Files",
-
-    badge: "AI Automation Case Study",
-    hero_title_main: "Тікет-агент, який",
-    hero_title_emphasis: "не дає клієнту охолонути",
-    hero_subtitle: "Самостійний AI-агент для realitní kancelář RealityPraha: класифікує звернення клієнтів за хвилини, призначає власника, рахує SLA-дедлайн і ескалує прострочені тікети — без диспетчера.",
-    meta_title: "Title",
-    meta_industry: "Industry",
-    meta_industry_val: "Real Estate · Praha, ČR",
-    meta_buildtime: "Build time",
-    meta_buildtime_val: "≈ 8 годин (Модуль 5)",
-    meta_stack: "Stack",
-    scroll: "Scroll",
-
-    ctx_eyebrow: "Context",
-    ctx_title: "Бізнес, який живе у поштовій скриньці",
-    ctx_lead: "RealityPraha — невелика realitní kancelář у Празі: 6 людей (3 makléři, юрист, office-менеджер і директор), 15–30 звернень на день через info@realitypraha.cz та форму на сайті.",
-    ctx_card1_h: "Поточний процес (до автоматизації)",
-    ctx_card1_li1: "Усі листи падають у спільну скриньку info@realitypraha.cz",
-    ctx_card1_li2: "Makléři вручну читають і сортують пошту 2–3 рази на день",
-    ctx_card1_li3: "Пріоритет визначається «на око» — залежно від настрою і завантаженості",
-    ctx_card1_li4: "Юридичні питання та скарги змішані зі стандартними дотазами і рекламою",
-    ctx_card2_h: "Команда та категорії",
-    ctx_card2_li1: "Property Inquiry / Viewing Request → Jan Novák",
-    ctx_card2_li2: "Pricing → Petra Horáková",
-    ctx_card2_li3: "Complaint → Martin Šimek (office manažer)",
-    ctx_card2_li4: "Legal Question → Eva Čermáková (právník)",
-    ctx_card2_li5: "Spam → ignorovat",
-
-    prob_eyebrow: "Problem & Solution",
-    prob_title: "VIP-клієнт чекає в одній черзі зі спамом",
-    prob_lead: "Найдорожча дірка в клієнтському сервісі — час між тим, як прийшов лист, і тим, як хтось узяв його в роботу.",
-    prob_card1_h: "Що не працювало",
-    prob_card1_li1: "VIP-запит на перегляд квартири за 8,5 млн Kč губився серед реклами та \"Як підготуватися до прохідки\"",
-    prob_card1_li2: "Скарга з погрозою судовим позовом могла чекати відповіді кілька днів",
-    prob_card1_li3: "Жодного SLA — \"відповімо коли руки дійдуть\"",
-    prob_card1_li4: "Ескалація відсутня: якщо makléř не відповів, ніхто про це не дізнається",
-    prob_card2_h: "Яка логіка побудована",
-    prob_card2_li1: "AI Classifier з Chain of Thought читає кожен лист і визначає category → priority → owner → sla_minutes",
-    prob_card2_li2: "Reasoning на 3 речення за вимірами naléhavost / obchodní dopad / kontext klienta",
-    prob_card2_li3: "SLA-таймер: P1 = 15 хв, P2 = 2 год, P3 = 24 год, P4 = 48 год",
-    prob_card2_li4: "3-рівнева ескалація: Slack DM власнику → Slack #cx-leads тімліду → email директору",
-
-    proc_eyebrow: "Process",
-    proc_title: "Від промпту до робочого агента",
-    proc1_h: "Prompt design — System Message з 5 блоками",
-    proc1_p: "Промпт AI Classifier побудований за фреймворком: <b>Роль</b> (старший координатор підтримки RealityPraha) → <b>Контекст</b> (6 категорій, P1–P4 з SLA-хвилинами, власники) → <b>Інструкція з вимірами</b> (спеціальні тригери — слова \"žaloba\", \"soud\", \"hrozím\" завжди дають P1) → <b>Chain of Thought</b> (обов'язковий аналіз naléhavost / obchodní dopad / kontext klienta) → <b>Формат відповіді</b> (строгий JSON).",
-    proc2_h: "API integration — OpenAI + Google Sheets + Slack",
-    proc2_p: "AI Agent node (n8n LangChain) викликає OpenAI Chat Model і повертає строго структурований JSON. Результат \"розплющується\" (Flatten Result) у плоский об'єкт із додатковим полем <code>sla_deadline</code>, яке рахується як <code>created_at + sla_minutes</code> у ISO 8601. Дані пишуться в Google Sheets через OAuth2, а сповіщення йдуть у Slack каналу <code>#cx-tickets</code> через окремий webhook на власника.",
-    proc3_h: "n8n workflow — два паралельних трека",
-    proc3_p1: "<b>Трек входу:</b> Gmail Trigger (1 хв) → Collect Ticket Context → AI Classifier → Flatten Result → фільтр «Не спам?» → паралельно Log → Sheets + Slack: Notify Owner.",
-    proc3_p2: "<b>SLA Watcher трек:</b> Schedule Trigger (5 хв) → Read Open Tickets → IF (SLA Breached?) → Compute Escalation Level → Switch by Level → L0 (Slack DM owner) / L1 (Slack #cx-leads тімліду) / L2 (email директору).",
-
-    wf_eyebrow: "Workflow",
-    wf_title: "Архітектура двох треків",
-    wf_lead: "Спрощена схема обох n8n-воркфлоу — вхідний трек класифікації та SLA-вотчер з ескалацією.",
-    wf_track1_title: "Track 1 — Вхід тікета (кожну хвилину)",
-    wf_track1_cap: "Лист → AI Classifier → запис у Sheets + сповіщення власнику",
-    wf_collect_ctx: "Collect Ticket Context",
-    wf_flatten: "Flatten Result",
-    wf_not_spam: "Не спам?",
-    wf_track2_title: "Track 2 — SLA Watcher (кожні 5 хв)",
-    wf_track2_cap: "Перевірка прострочених тікетів і ескалація за рівнями",
-    wf_read_tickets: "Read Open Tickets",
-    wf_compute_esc: "Compute Escalation Level",
-    wf_l0: "0 хв → Slack DM власнику (м'яке нагадування)",
-    wf_l1: "+30 хв → Slack #cx-leads, тімлід отримує контекст і reasoning",
-    wf_l2: "+60 хв → Email директору з повним таймлайном",
-
-    shots_eyebrow: "Screenshots",
-    shots_title: "Як це працює у продакшені",
-    shot1_cap: "<b>n8n — Track 1 (вхід тікета):</b> Gmail Trigger → Collect Ticket Context → AI Classifier (Chain of Thought) → Flatten Result → Не спам? → паралельно Log → Tickets Sheet + Slack: Notify Owner. У панелі Output — повний JSON класифікації (category, priority, owner, sla_minutes, reasoning, sentiment).",
-    shot2_cap: "<b>n8n — обидва треки разом:</b> зверху вхідний трек класифікації, знизу SLA Watcher (every 5m) → Read Open Tickets → SLA Breached? → Compute Escalation Level → Switch by Level → Slack: Remind Owner (L0) / Notify TL (L1) / Email Director (L2).",
-    shot3_cap: "<b>n8n — Track 2 успішний запуск:</b> Switch by Level спрацював, вивід ноди Slack: Remind Owner (L0)1 показує <code>ok: true</code> — повідомлення про прострочення SLA доставлено в Slack.",
-    shot4_cap: "<b>Tickets Log у Google Sheets:</b> 10 рядків з полями category, priority, owner, sla_minutes, sla_deadline (ISO 8601) та reasoning — 3 речення обґрунтування за naléhavost / obchodní dopad / kontext klienta для кожного тікета.",
-    shot5_cap: "<b>Slack — нова класифікація:</b> «🚨 Новий тікет — P4. Власник: null, Категорія: Spam, SLA: 2880 хв, Sentiment: neutral».",
-    shot6_cap: "<b>SLA-ескалація L0:</b> «⚠️ Нагадування — SLA прострочено. Власнику m.simek: тікет P1 прострочено на 65 хв. Тема: Stížnost na makléře — požaduji vrácení zálohy».",
-
-    res_eyebrow: "Results",
-    res_title: "Що змінюється для команди",
-    res_lead: "Розрахунок на основі поточного об'єму 15–30 тікетів/день та звичної ручної маршрутизації 2–3 рази на день.",
-    res1_label: "час до класифікації листа", res1_detail: "замість 2–4 годин очікування ручного перегляду пошти",
-    res2_label: "SLA для P1 (Legal / Complaint)", res2_detail: "автоматичний таймер + 3-рівнева ескалація замість \"коли руки дійдуть\"",
-    res3_label: "тікетів отримують власника", res3_detail: "кожен лист записується в Sheets з owner — жоден запит не \"падає в чорну діру\"",
-    res4_label: "тестових тікетів класифіковано", res4_detail: "P1–P4 коректно присвоєні, reasoning 2–3 речення на кожен",
-    res5_label: "nodes у production workflow", res5_detail: "2 паралельних трека: вхідна класифікація + SLA-вотчер",
-    res6_label: "вартість на 1 000 тікетів", res6_detail: "gpt-4o-mini, ≈ $0.0002 за класифікацію одного листа",
-
-    stack_eyebrow: "Tech Stack",
-    stack_title: "Інструменти під капотом",
-    stack1_role: "Orchestration",
-    stack3_role: "Tickets log + SLA source",
-    stack4_role: "Notify Owner + escalations",
-    stack5_role: "Trigger + Director email",
-    stack7_role: "Spam filter, 3-level routing",
-    stack8_name: "Czech-language",
-    stack8_role: "Prompt + UI локалізація",
-
-    deliv_eyebrow: "Deliverables",
-    deliv_title: "Файли проєкту",
-    deliv1_desc: "Експортований n8n workflow, 24 nodes, обидва треки",
-    deliv1_link: "Google Drive →",
-    deliv2_desc: "10 класифікованих тікетів з повним reasoning та sla_deadline",
-    deliv2_link: "Google Sheets →",
-    deliv3_desc: "Заповнений тікет-флоу: категорії, пріоритети, власники, ескалація",
-    deliv3_link: "Документ →",
-
-    foot_p1: "AI Ticket Routing + SLA Escalation Agent — Module 5 case study",
-    foot_p2: "Built with n8n · OpenAI · Google Workspace · Slack — <a href=\"https://tetiana-a.github.io/aiAutomationDev\" target=\"_blank\">tetiana-a.github.io/aiAutomationDev</a>"
-  },
-
-  en: {
-    nav_context: "Context", nav_problem: "Problem", nav_process: "Process",
-    nav_workflow: "Workflow", nav_results: "Results", nav_stack: "Stack", nav_files: "Files",
-
-    badge: "AI Automation Case Study",
-    hero_title_main: "A ticket agent that",
-    hero_title_emphasis: "never lets a lead go cold",
-    hero_subtitle: "A self-running AI agent for RealityPraha, a Prague realitní kancelář: it classifies incoming inquiries in seconds, assigns an owner, sets an SLA deadline, and escalates overdue tickets — with no dispatcher in the loop.",
-    meta_title: "Title",
-    meta_industry: "Industry",
-    meta_industry_val: "Real Estate · Prague, CZ",
-    meta_buildtime: "Build time",
-    meta_buildtime_val: "≈ 8 hours (Module 5)",
-    meta_stack: "Stack",
-    scroll: "Scroll",
-
-    ctx_eyebrow: "Context",
-    ctx_title: "A business that lives in its inbox",
-    ctx_lead: "RealityPraha is a small Prague realitní kancelář: 6 people (3 makléři, a lawyer, an office manager, and a director), 15–30 inquiries a day via info@realitypraha.cz and the website form.",
-    ctx_card1_h: "Current process (before automation)",
-    ctx_card1_li1: "Every email lands in the shared info@realitypraha.cz inbox",
-    ctx_card1_li2: "Makléři manually read and sort mail 2–3 times a day",
-    ctx_card1_li3: "Priority is decided \"by feel\" — depending on mood and workload",
-    ctx_card1_li4: "Legal questions and complaints get mixed in with routine inquiries and ads",
-    ctx_card2_h: "Team and categories",
-    ctx_card2_li1: "Property Inquiry / Viewing Request → Jan Novák",
-    ctx_card2_li2: "Pricing → Petra Horáková",
-    ctx_card2_li3: "Complaint → Martin Šimek (office manager)",
-    ctx_card2_li4: "Legal Question → Eva Čermáková (lawyer)",
-    ctx_card2_li5: "Spam → ignore",
-
-    prob_eyebrow: "Problem & Solution",
-    prob_title: "A VIP client waits in the same queue as spam",
-    prob_lead: "The most expensive gap in customer service is the time between an email arriving and someone actually picking it up.",
-    prob_card1_h: "What wasn't working",
-    prob_card1_li1: "A VIP request to view an 8.5M Kč apartment got lost among ads and \"how to prepare for a viewing\" content",
-    prob_card1_li2: "A complaint threatening legal action could sit unanswered for days",
-    prob_card1_li3: "No SLA at all — \"we'll reply whenever we get to it\"",
-    prob_card1_li4: "No escalation: if a makléř doesn't respond, nobody finds out",
-    prob_card2_h: "The logic that was built",
-    prob_card2_li1: "An AI Classifier with Chain of Thought reads every email and determines category → priority → owner → sla_minutes",
-    prob_card2_li2: "Reasoning in 3 sentences across naléhavost / obchodní dopad / kontext klienta",
-    prob_card2_li3: "SLA timer: P1 = 15 min, P2 = 2 hours, P3 = 24 hours, P4 = 48 hours",
-    prob_card2_li4: "3-level escalation: Slack DM to owner → Slack #cx-leads to team lead → email to the director",
-
-    proc_eyebrow: "Process",
-    proc_title: "From prompt to working agent",
-    proc1_h: "Prompt design — a 5-block system message",
-    proc1_p: "The AI Classifier prompt follows a framework: <b>Role</b> (senior support coordinator for RealityPraha) → <b>Context</b> (6 categories, P1–P4 with SLA minutes, owners) → <b>Dimension-based instructions</b> (special triggers — the words \"žaloba\", \"soud\", \"hrozím\" always mean P1) → <b>Chain of Thought</b> (a mandatory analysis of naléhavost / obchodní dopad / kontext klienta) → <b>Response format</b> (strict JSON).",
-    proc2_h: "API integration — OpenAI + Google Sheets + Slack",
-    proc2_p: "An AI Agent node (n8n LangChain) calls the OpenAI Chat Model and returns strictly structured JSON. The result is flattened (Flatten Result) into a plain object with an added <code>sla_deadline</code> field, computed as <code>created_at + sla_minutes</code> in ISO 8601. Data is written to Google Sheets via OAuth2, and notifications go to the owner's Slack via a dedicated <code>#cx-tickets</code> webhook.",
-    proc3_h: "n8n workflow — two parallel tracks",
-    proc3_p1: "<b>Inbound track:</b> Gmail Trigger (1 min) → Collect Ticket Context → AI Classifier → Flatten Result → «Not spam?» filter → in parallel Log → Sheets + Slack: Notify Owner.",
-    proc3_p2: "<b>SLA Watcher track:</b> Schedule Trigger (5 min) → Read Open Tickets → IF (SLA Breached?) → Compute Escalation Level → Switch by Level → L0 (Slack DM owner) / L1 (Slack #cx-leads team lead) / L2 (email to director).",
-
-    wf_eyebrow: "Workflow",
-    wf_title: "Architecture of the two tracks",
-    wf_lead: "A simplified diagram of both n8n workflows — the inbound classification track and the SLA watcher with escalation.",
-    wf_track1_title: "Track 1 — Ticket intake (every minute)",
-    wf_track1_cap: "Email → AI Classifier → write to Sheets + notify the owner",
-    wf_collect_ctx: "Collect Ticket Context",
-    wf_flatten: "Flatten Result",
-    wf_not_spam: "Not spam?",
-    wf_track2_title: "Track 2 — SLA Watcher (every 5 min)",
-    wf_track2_cap: "Checks for overdue tickets and escalates by level",
-    wf_read_tickets: "Read Open Tickets",
-    wf_compute_esc: "Compute Escalation Level",
-    wf_l0: "0 min → Slack DM to the owner (gentle reminder)",
-    wf_l1: "+30 min → Slack #cx-leads, team lead gets context and reasoning",
-    wf_l2: "+60 min → Email to the director with the full timeline",
-
-    shots_eyebrow: "Screenshots",
-    shots_title: "How it runs in production",
-    shot1_cap: "<b>n8n — Track 1 (ticket intake):</b> Gmail Trigger → Collect Ticket Context → AI Classifier (Chain of Thought) → Flatten Result → Not spam? → in parallel Log → Tickets Sheet + Slack: Notify Owner. The Output panel shows the full classification JSON (category, priority, owner, sla_minutes, reasoning, sentiment).",
-    shot2_cap: "<b>n8n — both tracks together:</b> the inbound classification track on top, the SLA Watcher (every 5m) → Read Open Tickets → SLA Breached? → Compute Escalation Level → Switch by Level → Slack: Remind Owner (L0) / Notify TL (L1) / Email Director (L2) below.",
-    shot3_cap: "<b>n8n — Track 2 successful run:</b> Switch by Level fired correctly, and the Slack: Remind Owner (L0)1 node output shows <code>ok: true</code> — the SLA-overdue message was delivered to Slack.",
-    shot4_cap: "<b>Tickets Log in Google Sheets:</b> 10 rows with category, priority, owner, sla_minutes, sla_deadline (ISO 8601), and reasoning — 3 sentences of justification across naléhavost / obchodní dopad / kontext klienta for every ticket.",
-    shot5_cap: "<b>Slack — new classification:</b> «🚨 New ticket — P4. Owner: null, Category: Spam, SLA: 2880 min, Sentiment: neutral».",
-    shot6_cap: "<b>SLA escalation L0:</b> «⚠️ Reminder — SLA overdue. Owner m.simek: P1 ticket overdue by 65 min. Subject: Stížnost na makléře — požaduji vrácení zálohy».",
-
-    res_eyebrow: "Results",
-    res_title: "What changes for the team",
-    res_lead: "Based on the current volume of 15–30 tickets/day and the usual 2–3 manual routing passes per day.",
-    res1_label: "time to classify an email", res1_detail: "instead of 2–4 hours waiting for someone to check the inbox",
-    res2_label: "SLA for P1 (Legal / Complaint)", res2_detail: "automatic timer + 3-level escalation instead of \"whenever we get to it\"",
-    res3_label: "of tickets get an owner", res3_detail: "every email is logged in Sheets with an owner — nothing falls into a black hole",
-    res4_label: "test tickets classified", res4_detail: "P1–P4 correctly assigned, with 2–3 sentences of reasoning for each",
-    res5_label: "nodes in the production workflow", res5_detail: "2 parallel tracks: inbound classification + SLA watcher",
-    res6_label: "cost per 1,000 tickets", res6_detail: "gpt-4o-mini, ≈ $0.0002 per email classified",
-
-    stack_eyebrow: "Tech Stack",
-    stack_title: "What's under the hood",
-    stack1_role: "Orchestration",
-    stack3_role: "Tickets log + SLA source",
-    stack4_role: "Notify Owner + escalations",
-    stack5_role: "Trigger + Director email",
-    stack7_role: "Spam filter, 3-level routing",
-    stack8_name: "Czech language",
-    stack8_role: "Prompt + UI localization",
-
-    deliv_eyebrow: "Deliverables",
-    deliv_title: "Project files",
-    deliv1_desc: "Exported n8n workflow, 24 nodes, both tracks",
-    deliv1_link: "Google Drive →",
-    deliv2_desc: "10 classified tickets with full reasoning and sla_deadline",
-    deliv2_link: "Google Sheets →",
-    deliv3_desc: "Completed ticket flow: categories, priorities, owners, escalation",
-    deliv3_link: "Document →",
-
-    foot_p1: "AI Ticket Routing + SLA Escalation Agent — Module 5 case study",
-    foot_p2: "Built with n8n · OpenAI · Google Workspace · Slack — <a href=\"https://tetiana-a.github.io/aiAutomationDev\" target=\"_blank\">tetiana-a.github.io/aiAutomationDev</a>"
-  },
-
-  cs: {
-    nav_context: "Kontext", nav_problem: "Problém", nav_process: "Proces",
-    nav_workflow: "Workflow", nav_results: "Výsledky", nav_stack: "Tech Stack", nav_files: "Soubory",
-
-    badge: "AI Automation Case Study",
-    hero_title_main: "Ticketový agent, který",
-    hero_title_emphasis: "nedovolí klientovi vychladnout",
-    hero_subtitle: "Samostatný AI agent pro pražskou realitní kancelář RealityPraha: klasifikuje příchozí dotazy během sekund, přiřazuje vlastníka, počítá SLA deadline a eskaluje promeškané tikety — bez dispečera.",
-    meta_title: "Title",
-    meta_industry: "Industry",
-    meta_industry_val: "Reality · Praha, ČR",
-    meta_buildtime: "Build time",
-    meta_buildtime_val: "≈ 8 hodin (Modul 5)",
-    meta_stack: "Stack",
-    scroll: "Scroll",
-
-    ctx_eyebrow: "Kontext",
-    ctx_title: "Firma, která žije ve své e-mailové schránce",
-    ctx_lead: "RealityPraha je malá pražská realitní kancelář: 6 lidí (3 makléři, právník, office manažer a ředitel), 15–30 dotazů denně přes info@realitypraha.cz a formulář na webu.",
-    ctx_card1_h: "Současný proces (před automatizací)",
-    ctx_card1_li1: "Všechny e-maily padají do společné schránky info@realitypraha.cz",
-    ctx_card1_li2: "Makléři ručně čtou a třídí poštu 2–3× denně",
-    ctx_card1_li3: "Priorita se určuje „od oka“ — podle nálady a vytíženosti",
-    ctx_card1_li4: "Právní dotazy a stížnosti se míchají s běžnými dotazy a reklamou",
-    ctx_card2_h: "Tým a kategorie",
-    ctx_card2_li1: "Property Inquiry / Viewing Request → Jan Novák",
-    ctx_card2_li2: "Pricing → Petra Horáková",
-    ctx_card2_li3: "Complaint → Martin Šimek (office manažer)",
-    ctx_card2_li4: "Legal Question → Eva Čermáková (právník)",
-    ctx_card2_li5: "Spam → ignorovat",
-
-    prob_eyebrow: "Problém & Řešení",
-    prob_title: "VIP klient čeká ve stejné řadě jako spam",
-    prob_lead: "Nejnákladnější díra v zákaznickém servisu je čas mezi tím, kdy e-mail dorazí, a tím, kdy se ho někdo skutečně chopí.",
-    prob_card1_h: "Co nefungovalo",
-    prob_card1_li1: "VIP poptávka na prohlídku bytu za 8,5 mil. Kč se ztratila mezi reklamou a články typu „jak se připravit na prohlídku“",
-    prob_card1_li2: "Stížnost s hrozbou žaloby mohla čekat na odpověď několik dní",
-    prob_card1_li3: "Žádné SLA — „odpovíme, až budeme mít čas“",
-    prob_card1_li4: "Žádná eskalace: pokud makléř neodpoví, nikdo se to nedozví",
-    prob_card2_h: "Jaká logika byla postavena",
-    prob_card2_li1: "AI Classifier s Chain of Thought přečte každý e-mail a určí category → priority → owner → sla_minutes",
-    prob_card2_li2: "Reasoning ve 3 větách podle rozměrů naléhavost / obchodní dopad / kontext klienta",
-    prob_card2_li3: "SLA timer: P1 = 15 min, P2 = 2 hod, P3 = 24 hod, P4 = 48 hod",
-    prob_card2_li4: "3úrovňová eskalace: Slack DM vlastníkovi → Slack #cx-leads teamleadovi → e-mail řediteli",
-
-    proc_eyebrow: "Proces",
-    proc_title: "Od promptu k funkčnímu agentovi",
-    proc1_h: "Prompt design — System Message s 5 bloky",
-    proc1_p: "Prompt AI Classifieru je postaven podle frameworku: <b>Role</b> (senior koordinátor podpory RealityPraha) → <b>Kontext</b> (6 kategorií, P1–P4 se SLA minutami, vlastníci) → <b>Instrukce podle rozměrů</b> (speciální triggery — slova „žaloba“, „soud“, „hrozím“ vždy znamenají P1) → <b>Chain of Thought</b> (povinná analýza naléhavost / obchodní dopad / kontext klienta) → <b>Formát odpovědi</b> (striktní JSON).",
-    proc2_h: "API integrace — OpenAI + Google Sheets + Slack",
-    proc2_p: "AI Agent node (n8n LangChain) volá OpenAI Chat Model a vrací striktně strukturovaný JSON. Výsledek se „zploští“ (Flatten Result) do plochého objektu s polem <code>sla_deadline</code>, které se počítá jako <code>created_at + sla_minutes</code> v ISO 8601. Data se zapisují do Google Sheets přes OAuth2 a notifikace chodí na Slack vlastníka přes samostatný webhook <code>#cx-tickets</code>.",
-    proc3_h: "n8n workflow — dvě paralelní trasy",
-    proc3_p1: "<b>Vstupní trasa:</b> Gmail Trigger (1 min) → Collect Ticket Context → AI Classifier → Flatten Result → filtr „Není spam?“ → paralelně Log → Sheets + Slack: Notify Owner.",
-    proc3_p2: "<b>SLA Watcher trasa:</b> Schedule Trigger (5 min) → Read Open Tickets → IF (SLA Breached?) → Compute Escalation Level → Switch by Level → L0 (Slack DM vlastníkovi) / L1 (Slack #cx-leads teamleadovi) / L2 (e-mail řediteli).",
-
-    wf_eyebrow: "Workflow",
-    wf_title: "Architektura dvou tras",
-    wf_lead: "Zjednodušené schéma obou n8n workflow — vstupní trasa klasifikace a SLA watcher s eskalací.",
-    wf_track1_title: "Track 1 — Vstup tiketu (každou minutu)",
-    wf_track1_cap: "E-mail → AI Classifier → zápis do Sheets + notifikace vlastníka",
-    wf_collect_ctx: "Collect Ticket Context",
-    wf_flatten: "Flatten Result",
-    wf_not_spam: "Není spam?",
-    wf_track2_title: "Track 2 — SLA Watcher (každých 5 min)",
-    wf_track2_cap: "Kontrola promeškaných tiketů a eskalace podle úrovní",
-    wf_read_tickets: "Read Open Tickets",
-    wf_compute_esc: "Compute Escalation Level",
-    wf_l0: "0 min → Slack DM vlastníkovi (mírná připomínka)",
-    wf_l1: "+30 min → Slack #cx-leads, teamlead získá kontext a reasoning",
-    wf_l2: "+60 min → E-mail řediteli s celým timeline",
-
-    shots_eyebrow: "Screenshoty",
-    shots_title: "Jak to běží v produkci",
-    shot1_cap: "<b>n8n — Track 1 (vstup tiketu):</b> Gmail Trigger → Collect Ticket Context → AI Classifier (Chain of Thought) → Flatten Result → Není spam? → paralelně Log → Tickets Sheet + Slack: Notify Owner. V panelu Output je vidět celý klasifikační JSON (category, priority, owner, sla_minutes, reasoning, sentiment).",
-    shot2_cap: "<b>n8n — obě trasy společně:</b> nahoře vstupní klasifikační trasa, dole SLA Watcher (every 5m) → Read Open Tickets → SLA Breached? → Compute Escalation Level → Switch by Level → Slack: Remind Owner (L0) / Notify TL (L1) / Email Director (L2).",
-    shot3_cap: "<b>n8n — úspěšný běh Track 2:</b> Switch by Level proběhl správně, výstup uzlu Slack: Remind Owner (L0)1 ukazuje <code>ok: true</code> — zpráva o promeškaném SLA byla doručena do Slacku.",
-    shot4_cap: "<b>Tickets Log v Google Sheets:</b> 10 řádků s poli category, priority, owner, sla_minutes, sla_deadline (ISO 8601) a reasoning — 3 věty odůvodnění podle naléhavost / obchodní dopad / kontext klienta pro každý tiket.",
-    shot5_cap: "<b>Slack — nová klasifikace:</b> «🚨 Nový tiket — P4. Vlastník: null, Kategorie: Spam, SLA: 2880 min, Sentiment: neutral».",
-    shot6_cap: "<b>SLA eskalace L0:</b> «⚠️ Připomínka — SLA promeškáno. Vlastníkovi m.simek: tiket P1 promeškán o 65 min. Předmět: Stížnost na makléře — požaduji vrácení zálohy».",
-
-    res_eyebrow: "Výsledky",
-    res_title: "Co se změní pro tým",
-    res_lead: "Výpočet vychází z aktuálního objemu 15–30 tiketů/den a běžných 2–3 ručních směrování za den.",
-    res1_label: "čas do klasifikace e-mailu", res1_detail: "místo 2–4 hodin čekání na ruční kontrolu schránky",
-    res2_label: "SLA pro P1 (Legal / Complaint)", res2_detail: "automatický timer + 3úrovňová eskalace místo „až budeme mít čas“",
-    res3_label: "tiketů má vlastníka", res3_detail: "každý e-mail se zapíše do Sheets s vlastníkem — nic nezapadne",
-    res4_label: "testovacích tiketů klasifikováno", res4_detail: "P1–P4 správně přiřazeny, reasoning 2–3 věty u každého",
-    res5_label: "nodů v produkčním workflow", res5_detail: "2 paralelní trasy: vstupní klasifikace + SLA watcher",
-    res6_label: "cena na 1 000 tiketů", res6_detail: "gpt-4o-mini, ≈ $0.0002 za klasifikaci jednoho e-mailu",
-
-    stack_eyebrow: "Tech Stack",
-    stack_title: "Nástroje pod kapotou",
-    stack1_role: "Orchestrace",
-    stack3_role: "Tickets log + zdroj SLA",
-    stack4_role: "Notify Owner + eskalace",
-    stack5_role: "Trigger + e-mail řediteli",
-    stack7_role: "Filtr spamu, 3úrovňové směrování",
-    stack8_name: "Český jazyk",
-    stack8_role: "Prompt + lokalizace UI",
-
-    deliv_eyebrow: "Výstupy",
-    deliv_title: "Soubory projektu",
-    deliv1_desc: "Exportovaný n8n workflow, 24 nodů, obě trasy",
-    deliv1_link: "Google Drive →",
-    deliv2_desc: "10 klasifikovaných tiketů s plným reasoning a sla_deadline",
-    deliv2_link: "Google Sheets →",
-    deliv3_desc: "Vyplněný ticket flow: kategorie, priority, vlastníci, eskalace",
-    deliv3_link: "Dokument →",
-
-    foot_p1: "AI Ticket Routing + SLA Escalation Agent — Module 5 case study",
-    foot_p2: "Built with n8n · OpenAI · Google Workspace · Slack — <a href=\"https://tetiana-a.github.io/aiAutomationDev\" target=\"_blank\">tetiana-a.github.io/aiAutomationDev</a>"
+/* ===== I18N ===== */
+const translations={
+  en:null,
+  cs:{
+    nav_context:'Kontext',nav_problem:'Problém',nav_process:'Proces',
+    nav_workflow:'Workflow',nav_results:'Výsledky',nav_stack:'Stack',nav_files:'Soubory',
+    badge:'AI Automation · Skutečný projekt',
+    hero_title_main:'Ticketový agent, který',
+    hero_title_emphasis:'nenechá klienta čekat',
+    hero_subtitle:'Autonomní AI agent postavený pro realitní kancelář RealityPraha v Praze: klasifikuje dotazy klientů do minuty, přiřazuje správnou osobu, počítá SLA deadline a eskaluje zpožděné tickety — bez dispečerů.',
+    meta_title:'Projekt',meta_industry:'Odvětví',meta_industry_val:'Nemovitosti · Praha, ČR',
+    meta_buildtime:'Čas vývoje',meta_buildtime_val:'≈ 8 hodin',meta_stack:'Stack',
+    scroll:'Scrollovat',
+    ctx_eyebrow:'Kontext',ctx_title:'Byznys, který žije v e-mailové schránce',
+    ctx_lead:'RealityPraha je malá realitní kancelář v Praze: 6 lidí (3 makléři, právník, office manažer a ředitel), zpracovává 15–30 dotazů denně přes info@realitypraha.cz a kontaktní formulář.',
+    ctx_card1_h:'Současný proces (před automatizací)',
+    ctx_card1_li1:'Všechny e-maily padají do sdílené schránky info@realitypraha.cz',
+    ctx_card1_li2:'Makléři ručně čtou a třídí poštu 2–3x denně',
+    ctx_card1_li3:'Priorita se určuje od oka — podle nálady a vytížení',
+    ctx_card1_li4:'Právní dotazy a stížnosti se míchají s běžnými dotazy a reklamou',
+    ctx_card2_h:'Tým a kategorie',
+    ctx_card2_li1:'Property Inquiry / Viewing Request → Jan Novák',
+    ctx_card2_li2:'Pricing → Petra Horáková',
+    ctx_card2_li3:'Complaint → Martin Šimek (office manažer)',
+    ctx_card2_li4:'Legal Question → Eva Čermáková (právník)',
+    ctx_card2_li5:'Spam → ignorovat',
+    prob_eyebrow:'Problém a řešení',prob_title:'VIP klient čeká ve stejné frontě jako spam',
+    prob_lead:'Největší ztráta v zákaznickém servisu — čas mezi přijetím e-mailu a jeho převedením do práce.',
+    prob_card1_h:'Co nefungovalo',
+    prob_card1_li1:'VIP dotaz na prohlídku bytu za 8,5 mil. Kč se ztratil mezi reklamou',
+    prob_card1_li2:'Stížnost s hrozbou žaloby mohla čekat na odpověď několik dní',
+    prob_card1_li3:'Žádné SLA — «odpovíme, když se k tomu dostaneme»',
+    prob_card1_li4:'Žádná eskalace: pokud makléř neodpověděl, nikdo se to nedozvěděl',
+    prob_card2_h:'Jaká logika byla postavena',
+    prob_card2_li1:'AI Classifier s Chain of Thought určí category → priority → owner → sla_minutes',
+    prob_card2_li2:'Odůvodnění ze 3 vět: naléhavost / obchodní dopad / kontext klienta',
+    prob_card2_li3:'SLA timer: P1 = 15 min, P2 = 2 hod, P3 = 24 hod, P4 = 48 hod',
+    prob_card2_li4:'3úrovňová eskalace: Slack DM → #cx-leads → e-mail řediteli',
+    proc_eyebrow:'Proces',proc_title:'Od promptu k fungujícímu agentovi',
+    proc1_h:'Prompt design — System Message s 5 bloky',
+    proc2_h:'API integrace — OpenAI + Google Sheets + Slack',
+    proc3_h:'n8n workflow — dvě paralelní trasy',
+    wf_eyebrow:'Workflow',wf_title:'Architektura dvou tras',
+    wf_lead:'Zjednodušený diagram obou n8n workflow.',
+    wf_track1_title:'Trasa 1 — Příjem ticketu (každou minutu)',
+    wf_track1_cap:'E-mail → AI klasifikátor → zápis do Sheets + notifikace',
+    wf_track2_title:'Trasa 2 — SLA Watcher (každých 5 min)',
+    wf_track2_cap:'Kontrola zpožděných ticketů a eskalace',
+    wf_l0:'0 min → Slack DM vlastníkovi',
+    wf_l1:'+30 min → Slack #cx-leads',
+    wf_l2:'+60 min → E-mail řediteli',
+    shots_eyebrow:'Screenshots',shots_title:'Jak to funguje v produkci',
+    res_eyebrow:'Výsledky',res_title:'Co se mění pro tým',
+    res_lead:'Na základě objemu 15–30 ticketů/den.',
+    res1_label:'čas do klasifikace',res1_detail:'místo 2–4 hodin ruční kontroly',
+    res2_label:'SLA pro P1',res2_detail:'automatický timer + 3úrovňová eskalace',
+    res3_label:'ticketů dostane vlastníka',res3_detail:'každý e-mail se zapisuje do Sheets',
+    res4_label:'testovacích ticketů',res4_detail:'P1–P4 správně přiřazeny',
+    res5_label:'nodes v produkci',res5_detail:'2 paralelní trasy',
+    res6_label:'náklady na 1000 ticketů',res6_detail:'gpt-4o-mini, ≈ $0.0002/ticket',
+    stack_eyebrow:'Tech Stack',stack_title:'Nástroje pod kapotou',
+    stack1_role:'Orchestrace',stack3_role:'Tickets log + SLA',
+    stack4_role:'Notifikace + eskalace',stack5_role:'Trigger + e-mail řediteli',
+    stack7_role:'Spam filtr, 3úrovňové routování',
+    stack8_name:'Česky jazykový',stack8_role:'Prompt + lokalizace',
+    deliv_eyebrow:'Deliverables',deliv_title:'Soubory projektu',
+    foot_p1:'AI Ticket Routing + SLA Escalation Agent — Case Study',
+    foot_p2:'Postaveno s n8n · OpenAI · Google Workspace · Slack — <a href="https://tetiana-a.github.io/aiAutomationDev" target="_blank">tetiana-a.github.io/aiAutomationDev</a>'
   }
 };
 
-// ===== LANGUAGE SWITCHER =====
-const langBtns = document.querySelectorAll('.lang-btn');
-function setLanguage(lang){
-  langBtns.forEach(btn => btn.classList.toggle('active', btn.dataset.lang === lang));
-  document.querySelectorAll('[data-i18n]').forEach(el=>{
-    const key = el.dataset.i18n;
-    if (translations[lang] && translations[lang][key] != null) el.textContent = translations[lang][key];
-  });
-  document.querySelectorAll('[data-i18n-html]').forEach(el=>{
-    const key = el.dataset.i18nHtml;
-    if (translations[lang] && translations[lang][key] != null) el.innerHTML = translations[lang][key];
-  });
-  document.documentElement.lang = lang;
+let currentLang='en';
+function applyTranslations(lang){
+  currentLang=lang;const t=translations[lang];if(!t)return;
+  document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.getAttribute('data-i18n');if(t[k]!==undefined)el.textContent=t[k];});
+  document.querySelectorAll('[data-i18n-html]').forEach(el=>{const k=el.getAttribute('data-i18n-html');if(t[k]!==undefined)el.innerHTML=t[k];});
+  document.documentElement.lang=lang;
 }
-langBtns.forEach(btn => btn.addEventListener('click', ()=>setLanguage(btn.dataset.lang)));
-
-// ===== MUSIC BUTTON =====
-const musicBtn = document.getElementById('musicBtn');
-const ambientAudio = document.getElementById('ambientAudio');
-let isPlaying = false;
-window.musicPlaying = false;
-musicBtn.addEventListener('click', ()=>{
-  if (isPlaying){
-    ambientAudio.pause();
-    musicBtn.classList.remove('active');
-  } else {
-    ambientAudio.volume = 0.5;
-    ambientAudio.play().catch(()=>{});
-    musicBtn.classList.add('active');
-  }
-  isPlaying = !isPlaying;
-  window.musicPlaying = isPlaying;
-  document.body.classList.toggle('music-playing', isPlaying);
+document.querySelectorAll('.lang-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    applyTranslations(btn.getAttribute('data-lang'));
+  });
 });
 </script>
 </body>
